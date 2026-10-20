@@ -86,7 +86,7 @@ python -m http.server 5173
 - [ ] Evergreen — misty pine forest (D18)
 - [ ] Twilight — violet to peach sky (D19)
 - [x] Reed Spectrum — teal/red/orange reeded glass (D20)
-- [ ] Reed Flame — red/orange crossing light, reeded (D21)
+- [x] Reed Flame — red/orange crossing light, reeded (D21)
 - [ ] Sunset Ridge — orange sun behind dark peaks (D22)
 - [ ] Aurora — northern lights over a mirror lake (D23)
 - [ ] Stipple — dithered neon hills (D24)
