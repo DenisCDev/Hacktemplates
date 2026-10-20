@@ -13,7 +13,7 @@ window.TEMPLATES = [
   { slug:'dusk', name:'Dusk', tags:['webgl','gradient','portfolio','serif','personal'], poster:'url(templates/dusk/scene.jpg) center/cover' },
   { slug:'aura', name:'Aura', tags:['webgl','orb','light','app','wellness'], poster:'url(templates/aura/scene.jpg) 70% 50%/auto 105% no-repeat,#fffaf6' },
   { slug:'solstice', name:'Solstice', tags:['webgl','cinematic','film','game','launch'], poster:'url(templates/solstice/scene.jpg) 50% 50%/auto 100% no-repeat,linear-gradient(#5a0904,#7d1606 70%,#e8670d 73%,#c74a08)' },
-  { slug:'beam', name:'Beam', tags:['webgl','dark','red','minimal','product'], poster:'radial-gradient(30% 6% at 50% 88%,#ff1a14,transparent),linear-gradient(90deg,#000 49.6%,#ff2a1a 50%,#000 50.4%)' },
+  { slug:'beam', name:'Beam', tags:['webgl','dark','red','minimal','product'], poster:'url(templates/beam/scene.jpg) 50% 50%/auto 100% no-repeat,#000' },
   { slug:'fluted', name:'Fluted', tags:['webgl','glass','refraction','interactive','privacy'], poster:'repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 6px,transparent 6px 14px),radial-gradient(25% 30% at 45% 45%,#ffd3a0,transparent),linear-gradient(110deg,#7a0606,#e3502f 70%,#f78a63)' },
   { slug:'reed-rose', name:'Reed Rose', tags:['webgl','glass','pastel','design','saas'], poster:'repeating-linear-gradient(90deg,rgba(255,255,255,.1) 0 3px,transparent 3px 10px),linear-gradient(90deg,#ee6145,#f48cae 45%,#b89fe0 85%)' },
 ];
