@@ -33,4 +33,5 @@ window.TEMPLATES = [
   { slug:'tidewave', name:'Tidewave', tags:['image','depth','saas','dashboard','colorful'], poster:'url(templates/tidewave/scene.jpg) center/cover' },
   { slug:'sandstorm', name:'Sandstorm', tags:['image','flow','fashion','ecommerce','light'], poster:'url(templates/sandstorm/scene.jpg) center/cover' },
   { slug:'riptide', name:'Riptide', tags:['image','grain','security','dark','saas'], poster:'url(templates/riptide/scene.jpg) center/cover' },
+  { slug:'evergreen', name:'Evergreen', tags:['image','depth','nature','nonprofit','climate'], poster:'url(templates/evergreen/scene.jpg) center/cover' },
 ];
