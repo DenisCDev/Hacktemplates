@@ -70,7 +70,7 @@ python -m http.server 5173
 - [x] Silk — sculpted white ribbon, orange glow (D2)
 - [x] Stratosphere — night blue to dawn horizon (D3)
 - [x] Spectrum — rainbow wash, smoked glass waves (D4)
-- [ ] Thermal — flowing heat bands (D5)
+- [x] Thermal — flowing heat bands (D5)
 - [ ] Canyon Violet — layered violet ridges (D6)
 - [ ] Glacier — cracked blue ice (D7)
 - [ ] Fuji — mountain, cloud band, night lake (D8)
