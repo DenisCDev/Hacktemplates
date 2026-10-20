@@ -55,7 +55,7 @@ python -m http.server 5173
 - [ ] Pocket — 3D retro handheld
 - [ ] Ukiyo — pagoda light pillars, water reflection
 - [x] Aura — soft orange orb, light theme
-- [ ] Solstice — giant sun, tiny figure
+- [x] Solstice — giant sun, tiny figure
 - [ ] Beam — red light beam, lone figure
 - [ ] Fluted — reeded glass refraction
 - [ ] Glitch — chromatic visor glitch
