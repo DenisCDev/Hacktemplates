@@ -59,7 +59,7 @@ python -m http.server 5173
 - [x] Beam — red light beam, lone figure
 - [x] Fluted — reeded glass refraction
 - [x] Glitch — chromatic visor glitch
-- [ ] Ruins — fantasy ruins above the clouds
+- [x] Ruins — fantasy ruins above the clouds
 - [ ] Red Dragon — fire dragon
 - [ ] Desert Dragon — dragon against the sun
 - [ ] Ink Dragon — ink-wash dragon

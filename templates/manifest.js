@@ -43,4 +43,5 @@ window.TEMPLATES = [
   { slug:'pocket', name:'Pocket', tags:['image','depth','product','ecommerce','retro'], poster:'url(templates/pocket/scene.jpg) 70% 50%/auto 100% no-repeat,#e9a08e' },
   { slug:'ukiyo', name:'Ukiyo', tags:['image','water','restaurant','japan','minimal'], poster:'url(templates/ukiyo/scene.jpg) center/cover' },
   { slug:'glitch', name:'Glitch', tags:['image','art','exhibition','glitch','poster'], poster:'url(templates/glitch/scene.jpg) center/cover' },
+  { slug:'ruins', name:'Ruins', tags:['image','depth','fantasy','gaming','cinematic'], poster:'url(templates/ruins/scene.jpg) center/cover' },
 ];
