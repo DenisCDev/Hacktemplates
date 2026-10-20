@@ -48,4 +48,5 @@ window.TEMPLATES = [
   { slug:'desert-dragon', name:'Desert Dragon', tags:['image','rig','fantasy','gaming','cinematic'], poster:'url(templates/desert-dragon/scene.jpg) center/cover' },
   { slug:'ink-dragon', name:'Ink Dragon', tags:['image','rig','ink','light','tattoo'], poster:'url(templates/ink-dragon/scene.jpg) 0% 50%/76% auto no-repeat,#efefed' },
   { slug:'smoke-dragon', name:'Smoke Dragon', tags:['image','rig','smoke','light','ai'], poster:'url(templates/smoke-dragon/scene.jpg) 66% 50%/auto 100% no-repeat,#f0f2f4' },
+  { slug:'pixel-sword', name:'Pixel Sword', tags:['image','pixel','gaming','hackathon','jam'], poster:'url(templates/pixel-sword/scene.jpg) center/cover' },
 ];

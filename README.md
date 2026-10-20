@@ -64,7 +64,7 @@ python -m http.server 5173
 - [x] Desert Dragon — dragon against the sun
 - [x] Ink Dragon — ink-wash dragon
 - [x] Smoke Dragon — dragon dissolving into smoke
-- [ ] Pixel Sword — pixel-art sword in the forest
+- [x] Pixel Sword — pixel-art sword in the forest
 - [ ] Ash King — crowned king, storm sky
 - [x] Redwood — sunlit redwoods, drifting mist (D1)
 - [x] Silk — sculpted white ribbon, orange glow (D2)

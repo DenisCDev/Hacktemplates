@@ -30,6 +30,7 @@
 
   main { max-width:1400px; margin:0 auto; padding:0 28px 120px; display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:28px; }
   .card { display:block; }
+  .card[data-slug="pixel-sword"] .frame { image-rendering:pixelated; }
   .frame { position:relative; aspect-ratio:16/10; border-radius:14px; overflow:hidden; border:1px solid var(--line); background-size:cover; background-position:center; transition:transform .5s cubic-bezier(.2,.7,.2,1), border-color .3s; }
   .card:hover .frame { transform:translateY(-4px); border-color:rgba(255,255,255,.2); }
   .frame iframe { position:absolute; top:0; left:0; width:1440px; height:900px; border:0; transform-origin:0 0; pointer-events:none; opacity:0; transition:opacity .6s; }
