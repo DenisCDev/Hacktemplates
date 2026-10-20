@@ -30,4 +30,5 @@ window.TEMPLATES = [
   { slug:'canyon-blue', name:'Canyon Blue', tags:['image','depth','auth','signup','saas'], poster:'url(templates/canyon-blue/scene.jpg) center/cover' },
   { slug:'fuji', name:'Fuji', tags:['image','landscape','japan','education','app'], poster:'url(templates/fuji/scene.jpg) center/cover' },
   { slug:'static', name:'Static', tags:['image','grain','podcast','audio','bold'], poster:'url(templates/static/scene.jpg) center/cover' },
+  { slug:'tidewave', name:'Tidewave', tags:['image','depth','saas','dashboard','colorful'], poster:'url(templates/tidewave/scene.jpg) center/cover' },
 ];

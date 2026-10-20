@@ -76,7 +76,7 @@ python -m http.server 5173
 - [x] Fuji — mountain, cloud band, night lake (D8)
 - [x] Canyon Magenta — layered magenta ridges (D9)
 - [x] Static — grainy orange/teal gradient (D10)
-- [ ] Tidewave — bold red/blue/gold waves (D11)
+- [x] Tidewave — bold red/blue/gold waves (D11)
 - [x] Reed Rose — pink/lavender reeded glass (D12)
 - [x] Reed Crimson — red reeded glass (D13)
 - [ ] Sandstorm — swept amber smoke (D14)
