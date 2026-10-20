@@ -9,7 +9,7 @@ window.TEMPLATES = [
   { slug:'prism', name:'Prism', tags:['webgl','gradient','neon','agency','bold'], poster:'url(templates/prism/scene.jpg) center/cover' },
   { slug:'nimbus', name:'Nimbus', tags:['webgl','clouds','devtool','serif','dark'], poster:'url(templates/nimbus/scene.jpg) center/cover' },
   { slug:'daybreak', name:'Daybreak', tags:['webgl','glow','waitlist','coming-soon','dark'], poster:'url(templates/daybreak/scene.jpg) center/cover' },
-  { slug:'abyss', name:'Abyss', tags:['webgl','water','dark','data','saas'], poster:'linear-gradient(180deg,#020708,#04201f 45%,#11605c 80%,#3fc7bd)' },
+  { slug:'abyss', name:'Abyss', tags:['webgl','water','dark','data','saas'], poster:'url(templates/abyss/scene.jpg) 50% 68%/cover' },
   { slug:'dusk', name:'Dusk', tags:['webgl','gradient','portfolio','serif','personal'], poster:'linear-gradient(155deg,#4d5e6b,#6f7a8c 30%,#9a7878 55%,#d47a2b 80%,#c25c10)' },
   { slug:'aura', name:'Aura', tags:['webgl','orb','light','app','wellness'], poster:'radial-gradient(circle at 68% 50%,#ffb21a 0,#ff5a1f 14%,#ff9f88 26%,#ffe3ec 40%,#fffdf9 58%)' },
   { slug:'solstice', name:'Solstice', tags:['webgl','cinematic','film','game','launch'], poster:'radial-gradient(circle at 50% 31%,#fff21a 0,#ff8c05 16%,#e85204 22%,#5a0a02 24%,#2a0302 62%),linear-gradient(transparent 72%,#ff9a1a 73%)' },

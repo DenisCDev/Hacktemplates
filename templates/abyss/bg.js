@@ -1,8 +1,10 @@
-/* Abyss — motion background
+/* Abyss — motion background (your image, animated)
  * Usage: <canvas data-bg></canvas> inside any positioned container, then <script src="bg.js"></script>.
- * No canvas found → a fixed full-screen one is created behind the page.
+ * Keep scene.jpg next to this file. Serve over http(s) — browsers block textures from file://.
+ * Optional: <canvas data-bg data-focus="x,y"> picks which part of the image stays in view when cropped (0..1).
  */
 (() => {
+  const base = (document.currentScript && document.currentScript.src || location.href).replace(/[^/]*$/, '');
   let canvas = document.querySelector('canvas[data-bg]');
   if (!canvas) {
     canvas = document.createElement('canvas');
@@ -10,51 +12,87 @@
     canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block';
     document.body.prepend(canvas);
   }
-  const gl = canvas.getContext('webgl', { antialias:false, alpha:false });
-  if (!gl) { canvas.style.background = 'linear-gradient(180deg,#020708,#04201f 45%,#11605c 80%,#3fc7bd)'; return; }
+  const focus = (canvas.dataset.focus || '.5,.32').split(',').map(Number);
+  // instant poster: the still image shows until the first animated frame is ready (and stays if WebGL2 is missing)
+  canvas.style.background = `url(${base}scene.jpg) ${focus[0] * 100}% ${100 - focus[1] * 100}% / cover no-repeat`;
+  const gl = canvas.getContext('webgl2', { antialias:false, alpha:false });
+  if (!gl) return;
 
-  const vert = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
-  const frag = `
+  const vert = `#version 300 es
+in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`;
+  const frag = `#version 300 es
 precision highp float;
-uniform vec2 r; uniform float t; uniform vec2 m;
-float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
-float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);
-  return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
-// water height: interfering directional swells, gently warped by noise
-float H(vec2 p,float T){
-  p*=2.6;
-  p+=vec2(noise(p*.3+T*.1),noise(p*.3-T*.1+7.))*2.2;
-  float v=0.;
-  v+=.50*sin(dot(p,vec2(.9,.4))*2.1+T*1.1);
-  v+=.35*sin(dot(p,vec2(-.6,.8))*2.9-T*1.3);
-  v+=.22*sin(dot(p,vec2(.2,-1.))*4.3+T*1.7);
-  v+=.14*sin(dot(p,vec2(-.95,-.3))*6.1-T*2.1);
-  v+=.08*sin(dot(p,vec2(.7,.7))*9.7+T*2.6);
-  v+=.05*sin(dot(p,vec2(-.3,.95))*14.3-T*3.1);
-  v+=.03*sin(dot(p,vec2(.99,-.1))*21.1+T*3.7);
-  return v*.5+.5;
+uniform sampler2D img;   // the scene image
+uniform sampler2D maps;  // per-template maps (R = depth, white = near)
+uniform vec2 r;          // canvas size, px
+uniform float t;         // seconds
+uniform vec2 m;          // pointer 0..1, smoothed
+uniform vec2 o;          // focus point in the image 0..1
+uniform float ia;        // image aspect (w/h)
+out vec4 fragColor;
+
+// screen uv (0..1, y up) → image uv, cover-fit around focus o. zoom > 1 crops in a little,
+// leaving margin so displacement/parallax never reveals an edge.
+vec2 cover(vec2 uv,float zoom){
+  float sa=r.x/r.y;
+  vec2 s=sa>ia?vec2(1.,ia/sa):vec2(sa/ia,1.);
+  s/=zoom;
+  vec2 c=clamp(o,s*.5,1.-s*.5);
+  return c+(uv-.5)*s;
+}
+float hash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+// Liquid drift for soft gradient photos: the image's own pixels flow along a slow, smooth field.
+float dn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+// curl of a noise potential → divergence-free flow (no pinching, looks like liquid)
+vec2 curl(vec2 p){
+  float e=.05;
+  float n1=dn(p+vec2(0.,e)),n2=dn(p-vec2(0.,e)),n3=dn(p+vec2(e,0.)),n4=dn(p-vec2(e,0.));
+  return vec2(n1-n2,-(n3-n4))/(2.*e);
+}
+// iu: image uv. amp ~ .02–.06, speed ~ .02–.06
+vec2 drift(vec2 iu,float amp,float speed){
+  float T=t*speed;
+  vec2 q=iu*1.6;
+  vec2 f=curl(q+vec2(T,T*.6))*.6+curl(q*2.1-vec2(T*.8,-T*1.1))*.4;
+  iu+=f*amp*.18;
+  // a second, slower sway of the whole field
+  iu+=vec2(sin(T*1.3+iu.y*3.),cos(T*1.1+iu.x*2.5))*amp*.25;
+  // pointer gently pushes the colour away
+  vec2 mp=m; vec2 d=(gl_FragCoord.xy/r-mp)*vec2(r.x/r.y,1.);
+  iu+=d*exp(-dot(d,d)*7.)*amp*.9;
+  return iu;
+}
+// sample with optional blur (mip bias) — gradients with baked grain read cleaner blurred, then fresh grain on top
+vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod).rgb;}
+vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt;}
+// Flow-map advection: the texture streams along \`dir\` forever without sliding off the image.
+// Two copies offset half a cycle apart crossfade, so the reset of each is never visible.
+// iu: image uv, dir: flow direction (image uv units / cycle), period: seconds per cycle, lod: blur
+vec3 flowSample(vec2 iu,vec2 dir,float period,float lod){
+  float ph=fract(t/period);
+  float ph2=fract(t/period+.5);
+  float w=abs(ph-.5)*2.;                                 // weight of copy 2 (0 when copy 1 is mid-cycle)
+  vec3 a=textureLod(img,iu-dir*(ph-.5),lod).rgb;
+  vec3 b=textureLod(img,iu-dir*(ph2-.5),lod).rgb;
+  return mix(a,b,w);
 }
 void main(){
-  float asp=r.x/r.y;
   vec2 uv=gl_FragCoord.xy/r;
-  float T=t*.25;
-  // perspective: bottom of screen is near, top recedes far away
-  float depth=1./(1.08-uv.y*.92);
-  vec2 w=vec2((uv.x-.5)*asp*depth*1.6,depth*2.2);
-  w+=(m-.5)*vec2(.6,.3);                              // pointer sways the surface
-  float e=.01;
-  float h0=H(w,T), hx=H(w+vec2(e,0.),T), hy=H(w+vec2(0.,e),T);
-  vec3 n=normalize(vec3((h0-hx)/e,(h0-hy)/e,4.5));
-  float light=pow(max(dot(n,normalize(vec3(.35,-.55,.75))),0.),4.);
-  float glint=pow(max(dot(n,normalize(vec3(-.2,-.4,.9))),0.),40.);
-
-  float bright=pow(smoothstep(.95,-.1,uv.y),2.2);   // light comes from below
-  vec3 deep=vec3(.008,.035,.04), teal=vec3(.12,.62,.6), foam=vec3(.45,.95,.9);
-  vec3 col=mix(deep,teal*.5,bright);
-  col+=teal*light*(.025+.8*bright);
-  col+=foam*glint*(.05+.5*bright);
-  col+=(h21(gl_FragCoord.xy+fract(t))-.5)*.025;
-  gl_FragColor=vec4(col,1.);
+  vec2 iu=cover(uv,1.08);
+  iu+=(m-.5)*vec2(.01,.006);
+  // surface swell: interfering waves, stronger toward the bright near water at the bottom
+  float near=smoothstep(1.,.0,uv.y);
+  float T=t*.6;
+  vec2 w=vec2(sin(iu.x*38.+iu.y*14.-T*1.3)+sin(iu.x*-21.+iu.y*31.+T*1.1)*.7,
+              cos(iu.x*27.-iu.y*19.+T*.9)+cos(iu.x*13.+iu.y*44.-T*1.6)*.6);
+  iu+=w*.0028*(.35+near);
+  vec3 c=flowSample(iu,vec2(.035,.012),14.,.4);
+  // broad caustic light sweeping across the lit ripples
+  float lum=dot(c,vec3(.2,.6,.2));
+  float sweep=sin(iu.x*11.+iu.y*7.-t*.7)*.5+sin(iu.x*-6.+iu.y*13.+t*.5)*.5;
+  c*=1.+.22*smoothstep(.12,.45,lum)*sweep;
+  fragColor=vec4(grain(c,.02),1.);
 }
 `;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
@@ -66,25 +104,53 @@ void main(){
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-  const U = n => gl.getUniformLocation(prog, n), ur = U('r'), ut = U('t'), um = U('m');
+  const U = n => gl.getUniformLocation(prog, n);
+  const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
+  gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1);
 
-  const SCALE = 0.75; // render scale vs CSS pixels — lower = faster, softer
-  const resize = () => { canvas.width = canvas.clientWidth * SCALE; canvas.height = canvas.clientHeight * SCALE; gl.viewport(0, 0, canvas.width, canvas.height); };
+  const load = (src, unit) => new Promise(res => {
+    if (!src) return res(null);
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      const tex = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+      res(im);
+    };
+    im.onerror = () => res(null);
+    im.src = base + src;
+  });
+
+  const SCALE = 0.8; // render scale vs CSS pixels (× devicePixelRatio, capped)
+  const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
   let mx = .5, my = .5, tx = mx, ty = my, visible = true;
   addEventListener('pointermove', e => { const b = canvas.getBoundingClientRect(); tx = (e.clientX - b.left) / b.width; ty = 1 - (e.clientY - b.top) / b.height; });
   new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(canvas);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const t0 = performance.now();
-  const frame = now => {
+
+  Promise.all([load('scene.jpg', 0), load(null, 1)]).then(([im]) => {
+    if (!im) return;
+    gl.uniform1f(uia, im.width / im.height);
+    gl.uniform2f(uo, focus[0], focus[1]);
+    const t0 = performance.now();
+    const frame = now => {
+      requestAnimationFrame(frame);
+      if (!visible) return;
+      mx += (tx - mx) * .05; my += (ty - my) * .05;
+      gl.uniform2f(ur, canvas.width, canvas.height);
+      gl.uniform1f(ut, still ? 0 : (now - t0) / 1000 + (canvas.seek || 0)); // canvas.seek = seconds, handy for tuning
+      gl.uniform2f(um, mx, my);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
     requestAnimationFrame(frame);
-    if (!visible) return;
-    mx += (tx - mx) * .04; my += (ty - my) * .04;
-    gl.uniform2f(ur, canvas.width, canvas.height);
-    gl.uniform1f(ut, still ? 20 : (now - t0) / 1000);
-    gl.uniform2f(um, mx, my);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  };
-  requestAnimationFrame(frame);
+  });
 })();
