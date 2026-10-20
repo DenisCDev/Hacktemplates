@@ -18,4 +18,5 @@ window.TEMPLATES = [
   { slug:'reed-rose', name:'Reed Rose', tags:['webgl','glass','pastel','design','saas'], poster:'url(templates/reed-rose/scene.jpg) center/cover' },
   { slug:'reed-crimson', name:'Reed Crimson', tags:['image','glass','music','album','dark'], poster:'url(templates/reed-crimson/scene.jpg) center/cover' },
   { slug:'reed-ember', name:'Reed Ember', tags:['image','glass','studio','film','dark'], poster:'url(templates/reed-ember/scene.jpg) center/cover' },
+  { slug:'reed-spectrum', name:'Reed Spectrum', tags:['image','glass','app','fintech','mobile'], poster:'url(templates/reed-spectrum/scene.jpg) center/cover' },
 ];
