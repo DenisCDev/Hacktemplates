@@ -17,8 +17,12 @@
   header { max-width:1400px; margin:0 auto; padding:72px 28px 40px; }
   header h1 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(44px,7vw,88px); line-height:.95; letter-spacing:-.02em; }
   header h1 em { color:var(--muted); }
+  header p code { font-size:.9em; color:var(--fg); }
   header p { margin-top:18px; color:var(--muted); max-width:560px; line-height:1.6; }
 
+  .mode { display:inline-flex; margin-top:28px; padding:4px; border:1px solid var(--line); border-radius:999px; }
+  .mode button { font:inherit; font-size:13px; color:var(--muted); background:none; border:0; border-radius:999px; padding:8px 16px; cursor:pointer; transition:.2s; }
+  .mode button[aria-pressed="true"] { background:var(--fg); color:#000; }
   .filters { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
   .filters button { font:inherit; font-size:13px; color:var(--muted); background:transparent; border:1px solid var(--line); border-radius:999px; padding:7px 14px; cursor:pointer; transition:.2s; }
   .filters button:hover { color:var(--fg); border-color:rgba(255,255,255,.2); }
@@ -34,6 +38,8 @@
   .meta { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:14px 2px 0; }
   .meta h2 { font-size:15px; font-weight:500; }
   .meta span { font-size:12px; color:var(--muted); }
+  .alt { font-size:12px; color:var(--muted); margin-top:6px; display:flex; gap:14px; }
+  .alt a:hover { color:var(--fg); }
   .empty { color:var(--muted); grid-column:1/-1; }
   @media (max-width:480px){ main{ grid-template-columns:1fr; } }
 </style>
@@ -41,7 +47,8 @@
 <body>
 <header>
   <h1>Hero sections, <em>ready to ship.</em></h1>
-  <p>Self-contained, zero-build landing heroes. Shaders, motion, and type. Open one, copy the folder, change the words.</p>
+  <p>Self-contained, zero-build landing heroes. Shaders, motion, and type. Open one, copy the folder, change the words. Every template also ships its motion background on its own (<code>bg.html</code> + <code>bg.js</code>).</p>
+  <div class="mode" id="mode"><button aria-pressed="true" data-mode="">Full hero</button><button aria-pressed="false" data-mode="bg.html">Background only</button></div>
   <div class="filters" id="filters"></div>
 </header>
 <main id="grid"></main>
@@ -52,6 +59,14 @@
   const grid = document.getElementById('grid');
   const filters = document.getElementById('filters');
   let active = 'all';
+  let page = '';   // '' = full hero (index.html), 'bg.html' = background only
+
+  document.getElementById('mode').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    page = b.dataset.mode;
+    document.querySelectorAll('#mode button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    unmount(); render();
+  });
 
   const tags = ['all', ...new Set(list.flatMap(t => t.tags))];
   filters.innerHTML = tags.map(t => `<button aria-pressed="${t === active}" data-tag="${t}">${t}</button>`).join('');
@@ -66,10 +81,11 @@
     const items = list.filter(t => active === 'all' || t.tags.includes(active));
     if (!items.length) { grid.innerHTML = '<p class="empty">Nothing here yet.</p>'; return; }
     grid.innerHTML = items.map(t => `
-      <a class="card" href="templates/${t.slug}/" data-slug="${t.slug}">
-        <div class="frame" style="background:${t.poster}"><span class="num">${String(list.indexOf(t) + 1).padStart(2, '0')}</span></div>
+      <div class="card" data-slug="${t.slug}">
+        <a href="templates/${t.slug}/${page}"><div class="frame" style="background:${t.poster}"><span class="num">${String(list.indexOf(t) + 1).padStart(2, '0')}</span></div></a>
         <div class="meta"><h2>${t.name}</h2><span>${t.tags.join(' · ')}</span></div>
-      </a>`).join('');
+        <div class="alt"><a href="templates/${t.slug}/">Hero ↗</a><a href="templates/${t.slug}/bg.html">Background ↗</a><a href="templates/${t.slug}/bg.js" download>bg.js ↓</a></div>
+      </div>`).join('');
   }
   render();
 
@@ -81,7 +97,7 @@
     unmount();
     const frame = card.querySelector('.frame');
     const iframe = document.createElement('iframe');
-    iframe.src = `templates/${card.dataset.slug}/`;
+    iframe.src = `templates/${card.dataset.slug}/${page}`;
     iframe.loading = 'eager';
     iframe.tabIndex = -1;
     iframe.onload = () => setTimeout(() => iframe.classList.add('ready'), 250);
