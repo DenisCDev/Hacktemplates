@@ -35,11 +35,11 @@
   .ghost:hover { background:rgba(255,255,255,.12); }
   .row .btn { padding:13px 22px; }
 
-  /* labels line up with the shader's glass panels (5 on wide screens, 3 on narrow) */
+  /* labels line up with the photo's five glass panels (the image spans the full width on screens wider than 3:2) */
   .panels { position:absolute; inset:auto 0 0; display:grid; grid-template-columns:repeat(5,1fr); }
   .panels div { padding:0 18px 22px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
   .panels b { display:block; font-weight:800; font-stretch:125%; font-size:28px; letter-spacing:-.02em; color:var(--fg); margin-bottom:4px; }
-  @media (max-aspect-ratio:6/5){ .panels{ grid-template-columns:repeat(3,1fr); } .panels div:nth-child(n+4){ display:none; } }
+  @media (max-aspect-ratio:3/2){ .panels{ display:none; } }
 
   .rv { opacity:0; transform:translateY(12px); animation:rise 1s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:calc(var(--d,0) * 1ms); }
   @keyframes rise { to { opacity:1; transform:none; } }

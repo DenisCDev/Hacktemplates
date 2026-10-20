@@ -1,8 +1,10 @@
-/* Fluted — motion background
+/* Fluted — motion background (your image, animated)
  * Usage: <canvas data-bg></canvas> inside any positioned container, then <script src="bg.js"></script>.
- * No canvas found → a fixed full-screen one is created behind the page.
+ * Keep scene.jpg next to this file. Serve over http(s) — browsers block textures from file://.
+ * Optional: <canvas data-bg data-focus="x,y"> picks which part of the image stays in view when cropped (0..1).
  */
 (() => {
+  const base = (document.currentScript && document.currentScript.src || location.href).replace(/[^/]*$/, '');
   let canvas = document.querySelector('canvas[data-bg]');
   if (!canvas) {
     canvas = document.createElement('canvas');
@@ -10,65 +12,82 @@
     canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block';
     document.body.prepend(canvas);
   }
-  const gl = canvas.getContext('webgl', { antialias:false, alpha:false });
-  if (!gl) { canvas.style.background = 'repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 4px,transparent 4px 9px),linear-gradient(110deg,#7a0606,#e3502f 70%,#f78a63)'; return; }
+  const focus = (canvas.dataset.focus || '.5,.5').split(',').map(Number);
+  // instant poster: the still image shows until the first animated frame is ready (and stays if WebGL2 is missing)
+  canvas.style.background = `url(${base}scene.jpg) ${focus[0] * 100}% ${100 - focus[1] * 100}% / cover no-repeat`;
+  const gl = canvas.getContext('webgl2', { antialias:false, alpha:false });
+  if (!gl) return;
 
-  const vert = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
-  const frag = `
+  const vert = `#version 300 es
+in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`;
+  const frag = `#version 300 es
 precision highp float;
-uniform vec2 r; uniform float t; uniform vec2 m;
-float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
-float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);
-  return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
-float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
-// Reeded glass. Call reedTaps(uv, cell) to get a lens offset + rib highlight for a vertical rib of \`cell\` px.
-// Each rib acts like a little cylinder lens: it squeezes and mirrors the scene behind it.
-vec3 reed(float coord,float cell){
-  float f=fract(coord/cell);
-  float bend=(f-.5);
-  float shade=sin(f*3.14159);
-  return vec3(bend,shade,f);
-}
+uniform sampler2D img;   // the scene image
+uniform sampler2D maps;  // per-template maps (R = depth, white = near)
+uniform vec2 r;          // canvas size, px
+uniform float t;         // seconds
+uniform vec2 m;          // pointer 0..1, smoothed
+uniform vec2 o;          // focus point in the image 0..1
+uniform float ia;        // image aspect (w/h)
+out vec4 fragColor;
 
-// behind the glass: red wash, a dark drifting brush shape, and a light that follows the pointer
-vec3 scene(vec2 uv,float asp){
-  vec3 c=mix(vec3(.5,.02,.03),vec3(.98,.42,.3),clamp(uv.x*.85+uv.y*.25,0.,1.));
-  float T=t*.25;
-  float y1=.62+.09*sin(uv.x*4.+T)+.04*sin(uv.x*9.-T*1.7);
-  float band=smoothstep(.085,.0,abs(uv.y-y1)*.75+(noise(uv*vec2(9.,3.)+T)-.5)*.06)*smoothstep(.75,.15,uv.x+.15*sin(T*.7));
-  vec2 b2=vec2(.62+.12*sin(T*.8),.38+.08*cos(T*.6));
-  vec2 d2=(uv-b2)*vec2(asp,1.);
-  float blob=smoothstep(.2,.05,length(d2*vec2(1.,1.6))+(noise(uv*6.+T)-.5)*.12);
-  c=mix(c,vec3(.3,0.,.02),max(band*.9,blob*.85));
-  vec2 dl=(uv-m)*vec2(asp,1.);
-  c+=vec3(1.,.72,.45)*exp(-dot(dl,dl)*40.)*1.1+vec3(1.,.3,.15)*exp(-dot(dl,dl)*5.)*.35;
-  return c;
+// screen uv (0..1, y up) → image uv, cover-fit around focus o. zoom > 1 crops in a little,
+// leaving margin so displacement/parallax never reveals an edge.
+vec2 cover(vec2 uv,float zoom){
+  float sa=r.x/r.y;
+  vec2 s=sa>ia?vec2(1.,ia/sa):vec2(sa/ia,1.);
+  s/=zoom;
+  vec2 c=clamp(o,s*.5,1.-s*.5);
+  return c+(uv-.5)*s;
 }
+float hash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+// Liquid drift for soft gradient photos: the image's own pixels flow along a slow, smooth field.
+float dn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+// curl of a noise potential → divergence-free flow (no pinching, looks like liquid)
+vec2 curl(vec2 p){
+  float e=.05;
+  float n1=dn(p+vec2(0.,e)),n2=dn(p-vec2(0.,e)),n3=dn(p+vec2(e,0.)),n4=dn(p-vec2(e,0.));
+  return vec2(n1-n2,-(n3-n4))/(2.*e);
+}
+// iu: image uv. amp ~ .02–.06, speed ~ .02–.06
+vec2 drift(vec2 iu,float amp,float speed){
+  float T=t*speed;
+  vec2 q=iu*1.6;
+  vec2 f=curl(q+vec2(T,T*.6))*.6+curl(q*2.1-vec2(T*.8,-T*1.1))*.4;
+  iu+=f*amp*.18;
+  // a second, slower sway of the whole field
+  iu+=vec2(sin(T*1.3+iu.y*3.),cos(T*1.1+iu.x*2.5))*amp*.25;
+  // pointer gently pushes the colour away
+  vec2 mp=m; vec2 d=(gl_FragCoord.xy/r-mp)*vec2(r.x/r.y,1.);
+  iu+=d*exp(-dot(d,d)*7.)*amp*.9;
+  return iu;
+}
+// sample with optional blur (mip bias) — gradients with baked grain read cleaner blurred, then fresh grain on top
+vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod).rgb;}
+vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt;}
+// Five reeded panels baked into the photo. Shifting the sample *along each panel's rib direction*
+// leaves the ribs in place (they're uniform that way) while the shapes behind the glass appear to swim.
 void main(){
-  float asp=r.x/r.y;
   vec2 uv=gl_FragCoord.xy/r;
-  float N=asp>1.2?5.:3.;
-  float k=mod(floor(uv.x*N),5.);
-  vec2 px=gl_FragCoord.xy*(900./r.y);                 // pattern scale independent of resolution
-  vec2 off=vec2(0.); float shade=0.;
-  // five panels, five reeding patterns (like the reference sheet)
-  if(k<.5){       vec3 q=reed(px.x,22.);         off.x=q.x*.11; shade=q.y; }
-  else if(k<1.5){ vec3 q=reed(px.y,26.);        off.y=q.x*.13;  shade=q.y; }
-  else if(k<2.5){ vec3 a=reed(px.x,26.),b=reed(px.y,26.); off=vec2(a.x,b.x)*.1; shade=a.y*b.y; }
-  else if(k<3.5){ vec3 q=reed(px.x+px.y,30.);   off=vec2(.7)*q.x*.14; shade=q.y; }
-  else{           vec3 q=reed(px.x*.5+px.y,44.); off=vec2(.45,.9)*q.x*.2; shade=q.y; }
-  vec2 suv=uv+off;
-  vec3 col=vec3(0.);
-  for(int i=0;i<4;i++){                               // a little frosting
-    float a=float(i)*1.5708+h21(gl_FragCoord.xy)*.6;
-    col+=scene(suv+vec2(cos(a),sin(a))*.008,asp);
-  }
-  col*=.25;
-  col*=.86+.22*shade;
-  float seam=abs(fract(uv.x*N)-.5)*2.;
-  col*=1.-.22*smoothstep(.985,1.,seam);
-  col+=(h21(gl_FragCoord.xy+fract(t))-.5)*.03;
-  gl_FragColor=vec4(col,1.);
+  vec2 iu=cover(uv,1.0);
+  float k=clamp(floor(iu.x*5.),0.,4.);
+  vec2 dir=k<.5?vec2(0.,1.):k<1.5?vec2(1.,0.):k<2.5?vec2(.7071):k<3.5?vec2(.5,-.866):vec2(.866,.5);
+  float amp=k>1.5&&k<2.5?.004:.012;                       // dimpled panel has no clean axis: keep it subtle
+  float edge=min(iu.x-k*.2,(k+1.)*.2-iu.x);               // distance to this panel's seams
+  amp*=smoothstep(.0,.035,edge);                          // motion fades out at the seams: nothing smears across
+  vec2 s=iu+dir*amp*sin(t*.35+k*1.3)+dir*amp*.5*sin(t*.83+k*2.1);
+  vec3 c=textureLod(img,s,.2).rgb;
+  // the sun behind panel 14 breathes
+  vec2 sun=vec2(.705,.475);
+  vec2 d=(iu-sun)*vec2(ia,1.);
+  float pulse=.5+.5*sin(t*.6);
+  c+=vec3(1.,.55,.3)*exp(-dot(d,d)*60.)*(.12+.1*pulse);
+  // a soft light drifting behind the glass, following the pointer
+  vec2 dl=(uv-m)*vec2(r.x/r.y,1.);
+  float light=exp(-dot(dl,dl)*7.);
+  c=1.-(1.-c)*(1.-vec3(1.,.6,.4)*light*.22);
+  fragColor=vec4(grain(c,.02),1.);
 }
 `;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
@@ -80,27 +99,53 @@ void main(){
   gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-  const U = n => gl.getUniformLocation(prog, n), ur = U('r'), ut = U('t'), um = U('m'), uo = U('o');
-  const focus = (canvas.dataset.focus || '.5,.5').split(',').map(Number); // optional: <canvas data-bg data-focus="x,y">
+  const U = n => gl.getUniformLocation(prog, n);
+  const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
+  gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1);
 
-  const SCALE = 1; // render scale vs CSS pixels — lower = faster, softer
-  const resize = () => { canvas.width = canvas.clientWidth * SCALE; canvas.height = canvas.clientHeight * SCALE; gl.viewport(0, 0, canvas.width, canvas.height); };
+  const load = (src, unit) => new Promise(res => {
+    if (!src) return res(null);
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      const tex = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+      res(im);
+    };
+    im.onerror = () => res(null);
+    im.src = base + src;
+  });
+
+  const SCALE = 1.0; // render scale vs CSS pixels (× devicePixelRatio, capped)
+  const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
   let mx = .5, my = .5, tx = mx, ty = my, visible = true;
   addEventListener('pointermove', e => { const b = canvas.getBoundingClientRect(); tx = (e.clientX - b.left) / b.width; ty = 1 - (e.clientY - b.top) / b.height; });
   new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(canvas);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const t0 = performance.now();
-  const frame = now => {
+
+  Promise.all([load('scene.jpg', 0), load(null, 1)]).then(([im]) => {
+    if (!im) return;
+    gl.uniform1f(uia, im.width / im.height);
+    gl.uniform2f(uo, focus[0], focus[1]);
+    const t0 = performance.now();
+    const frame = now => {
+      requestAnimationFrame(frame);
+      if (!visible) return;
+      mx += (tx - mx) * .05; my += (ty - my) * .05;
+      gl.uniform2f(ur, canvas.width, canvas.height);
+      gl.uniform1f(ut, still ? 0 : (now - t0) / 1000 + (canvas.seek || 0)); // canvas.seek = seconds, handy for tuning
+      gl.uniform2f(um, mx, my);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
     requestAnimationFrame(frame);
-    if (!visible) return;
-    mx += (tx - mx) * .04; my += (ty - my) * .04;
-    gl.uniform2f(ur, canvas.width, canvas.height);
-    gl.uniform1f(ut, still ? 20 : (now - t0) / 1000);
-    gl.uniform2f(um, mx, my);
-    if (uo) gl.uniform2f(uo, focus[0], focus[1]);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  };
-  requestAnimationFrame(frame);
+  });
 })();
