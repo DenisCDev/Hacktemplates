@@ -6,7 +6,7 @@ window.TEMPLATES = [
   { slug:'eclipse', name:'Eclipse', tags:['webgl','gradient','grain','editorial','light'], poster:'url(templates/eclipse/scene.jpg) center/cover' },
   { slug:'ember', name:'Ember', tags:['webgl','gradient','event','hackathon','bold'], poster:'url(templates/ember/scene.jpg) center/cover' },
   { slug:'bokeh', name:'Bokeh', tags:['webgl','dark','ai','prompt','glass'], poster:'url(templates/bokeh/scene.jpg) center/cover' },
-  { slug:'prism', name:'Prism', tags:['webgl','gradient','neon','agency','bold'], poster:'conic-gradient(from 200deg at 47% 53%,#ff0029,#ff6100,#0df226,#d1ff4d,#bf0d1f,#05031a,#05066b,#5200a0,#d9007f,#ff0029)' },
+  { slug:'prism', name:'Prism', tags:['webgl','gradient','neon','agency','bold'], poster:'url(templates/prism/scene.jpg) center/cover' },
   { slug:'nimbus', name:'Nimbus', tags:['webgl','clouds','devtool','serif','dark'], poster:'linear-gradient(100deg,#ece0cf,#d9c3a8 30%,#3b4a52 48%,#161d22 70%)' },
   { slug:'daybreak', name:'Daybreak', tags:['webgl','glow','waitlist','coming-soon','dark'], poster:'radial-gradient(90% 75% at 48% 115%,#ffd660,#ff9f0a 35%,#b0490a 55%,#3a1408 70%,#121010 85%)' },
   { slug:'abyss', name:'Abyss', tags:['webgl','water','dark','data','saas'], poster:'linear-gradient(180deg,#020708,#04201f 45%,#11605c 80%,#3fc7bd)' },
