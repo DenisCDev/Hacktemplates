@@ -61,7 +61,7 @@ python -m http.server 5173
 - [x] Glitch — chromatic visor glitch
 - [x] Ruins — fantasy ruins above the clouds
 - [x] Red Dragon — fire dragon
-- [ ] Desert Dragon — dragon against the sun
+- [x] Desert Dragon — dragon against the sun
 - [ ] Ink Dragon — ink-wash dragon
 - [ ] Smoke Dragon — dragon dissolving into smoke
 - [ ] Pixel Sword — pixel-art sword in the forest

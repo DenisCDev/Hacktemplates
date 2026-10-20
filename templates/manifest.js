@@ -45,4 +45,5 @@ window.TEMPLATES = [
   { slug:'glitch', name:'Glitch', tags:['image','art','exhibition','glitch','poster'], poster:'url(templates/glitch/scene.jpg) center/cover' },
   { slug:'ruins', name:'Ruins', tags:['image','depth','fantasy','gaming','cinematic'], poster:'url(templates/ruins/scene.jpg) center/cover' },
   { slug:'red-dragon', name:'Red Dragon', tags:['image','depth','fantasy','book','fire'], poster:'url(templates/red-dragon/scene.jpg) center/cover' },
+  { slug:'desert-dragon', name:'Desert Dragon', tags:['image','rig','fantasy','gaming','cinematic'], poster:'url(templates/desert-dragon/scene.jpg) center/cover' },
 ];
