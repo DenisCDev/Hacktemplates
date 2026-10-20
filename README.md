@@ -80,7 +80,7 @@ python -m http.server 5173
 - [x] Reed Rose — pink/lavender reeded glass (D12)
 - [x] Reed Crimson — red reeded glass (D13)
 - [ ] Sandstorm — swept amber smoke (D14)
-- [ ] Reed Ember — orange band behind reeded glass (D15)
+- [x] Reed Ember — orange band behind reeded glass (D15)
 - [ ] Riptide — grainy navy wave (D16)
 - [ ] Canyon Blue — layered blue ridges (D17)
 - [ ] Evergreen — misty pine forest (D18)
