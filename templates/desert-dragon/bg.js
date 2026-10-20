@@ -65,8 +65,8 @@ vec2 drift(vec2 iu,float amp,float speed){
   return iu;
 }
 // sample with optional blur (mip bias) — gradients with baked grain read cleaner blurred, then fresh grain on top
-vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod).rgb;}
-vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt;}
+vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod*.2).rgb;}   // near-full detail: the image is the hero
+vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt*.55;}   // light dither only
 // img  = the original painting (dragon colours)   sky  = clean plate (dragon removed, sun rebuilt)
 // maps.r = dragon alpha. All rig points measured on the painting (uv, y up).
 const vec2 PL=vec2(.474,.627);    // left shoulder
@@ -90,7 +90,7 @@ vec2 rig(vec2 q){
   vec2 a=(q-PL)*vec2(ia,1.); float rL=length(a);
   float bend=smoothstep(.02,.42,rL);
   float angL=(.2*b+.06*sin(T-rL*5.-.6))*bend;
-  float gL=smoothstep(PL.x+.004,PL.x-.035,q.x);
+  float gL=smoothstep(PL.x+.004,PL.x-.035,q.x)*smoothstep(.18,.5,abs(a.x)/max(rL,1e-4));   // sideways from the shoulder only (never the tail below)
   float k=1.-.05*max(0.,-b)*bend;                      // foreshorten on the downstroke
   vec2 la=rot(angL*gL)*a; la.x/=mix(1.,k,gL);
   q=PL+la/vec2(ia,1.);
@@ -98,23 +98,25 @@ vec2 rig(vec2 q){
   vec2 c=(q-PR)*vec2(ia,1.); float rR=length(c);
   float bendR=smoothstep(.02,.42,rR);
   float angR=(.2*b+.06*sin(T-rR*5.-.6))*bendR;
-  float gR=smoothstep(PR.x-.004,PR.x+.035,q.x);
+  float gR=smoothstep(PR.x-.004,PR.x+.035,q.x)*smoothstep(.18,.5,abs(c.x)/max(rR,1e-4));
   float kR=1.-.05*max(0.,-b)*bendR;
   vec2 ra=rot(-angR*gR)*c; ra.x/=mix(1.,kR,gR);
   q=PR+ra/vec2(ia,1.);
 
-  // tail: pendulum sway rippling down its length, lagging the wing beat
-  vec2 d=(q-TB)*vec2(ia,1.); float rT=length(d);
-  float gT=smoothstep(TB.y+.01,TB.y-.04,q.y);
-  float angT=(.06*sin(T*.5-rT*6.)+.03*sin(t*.4))*smoothstep(.02,.35,rT);
-  q=TB+(rot(-angT*gT)*d)/vec2(ia,1.);
+  // tail: a whip — sideways sway that grows down the tail and travels along it (monotonic per row: never folds)
+  float dy=max(TB.y-q.y,0.);
+  float sway=(.018*sin(T*.5-dy*14.)+.008*sin(t*.37-dy*9.))*pow(dy/.21,1.4);
+  q.x-=sway/ia*smoothstep(.0,.03,dy);
   return q;
 }
 vec4 dragon(vec2 iu){
   vec2 q=rig(iu);
   float inb=step(0.,q.x)*step(q.x,1.)*step(0.,q.y)*step(q.y,1.);
   float a=textureLod(maps,q,0.).r*inb;
-  return vec4(textureLod(img,q,0.).rgb,a);
+  // defringe: the painting's edge pixels are a blend of dragon and sky; remove the sky that was behind them
+  vec3 I=textureLod(img,q,0.).rgb, B=textureLod(sky,q,0.).rgb;
+  vec3 F=clamp((I-(1.-a)*B)/max(a,.15),0.,1.);
+  return vec4(F,a);
 }
 // background: the clean plate with drifting clouds, blowing dust and heat shimmer
 vec3 plate(vec2 iu){
@@ -176,6 +178,7 @@ void main(){
   const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
   gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1); gl.uniform1i(U('sky'), 2);
 
+  const aniso = gl.getExtension('EXT_texture_filter_anisotropic');   // keeps warped/displaced texture sharp
   const load = (src, unit) => new Promise(res => {
     if (!src) return res(null);
     const im = new Image();
@@ -190,13 +193,14 @@ void main(){
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
       res(im);
     };
     im.onerror = () => res(null);
     im.src = base + src;
   });
 
-  const SCALE = 0.9; // render scale vs CSS pixels (× devicePixelRatio, capped)
+  const SCALE = 1.0; // render at full device resolution (× devicePixelRatio, capped at 2)
   const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
