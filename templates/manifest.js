@@ -25,4 +25,5 @@ window.TEMPLATES = [
   { slug:'stratosphere', name:'Stratosphere', tags:['image','sky','space','launch','countdown'], poster:'url(templates/stratosphere/scene.jpg) center/cover' },
   { slug:'spectrum', name:'Spectrum', tags:['image','gradient','newsletter','editorial','serif'], poster:'url(templates/spectrum/scene.jpg) center/cover' },
   { slug:'thermal', name:'Thermal', tags:['image','gradient','devtool','infra','bold'], poster:'url(templates/thermal/scene.jpg) center/cover' },
+  { slug:'canyon-violet', name:'Canyon Violet', tags:['image','depth','mac','app','productivity'], poster:'url(templates/canyon-violet/scene.jpg) center/cover' },
 ];
