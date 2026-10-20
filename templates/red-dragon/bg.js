@@ -94,41 +94,75 @@ float shafts(vec2 p,vec2 dir,float freq){
   float a=dn(vec2(x,t*.08))*.6+dn(vec2(x*2.3+5.,t*.11))*.4;
   return smoothstep(.45,.9,a);
 }
-const vec2 EYE=vec2(.325,.501);
+// Rig points measured on the painting (uv, y up)
+const vec2 EYE=vec2(.348,.528);
+const vec2 HINGE=vec2(.338,.335);     // jaw hinge
+const vec2 NECK=vec2(.52,.62);        // the head pivots around the neck
+const float TAU=6.2831853;
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+
+// breathing cycle: slow inhale (head lifts), short snarl at the peak (jaw opens), exhale
+float breath(){ return .5-.5*cos(t*TAU/6.5); }
+float snarl(){ float p=fract(t/6.5); return smoothstep(.42,.5,p)*smoothstep(.78,.6,p); }
+
+vec2 rig(vec2 q){
+  float d=depthAt(q);
+  float body=smoothstep(.35,.6,d);
+  float B=breath(), S=snarl();
+  // 1) whole dragon: rises on the inhale, settles on the exhale (near layers move more = depth)
+  q.y-=(.012*B-.006)*body;
+  // 2) head turns slightly toward the viewer on the snarl (rotation about the neck, falls off into the coils)
+  vec2 nk=(q-NECK)*vec2(ia,1.);
+  float head=smoothstep(.55,.18,length(nk))*body;
+  q=NECK+(rot(-(.025*B+.02*S)*head)*nk)/vec2(ia,1.);
+  // 3) jaw: lower jaw rotates down about the hinge — region below the hinge line, left of it
+  vec2 j=(q-HINGE)*vec2(ia,1.);
+  float jaw=smoothstep(.0,-.02,j.y+j.x*.35)*smoothstep(.28,.1,length(j))*smoothstep(.04,-.02,j.x);
+  q=HINGE+(rot(-.22*S*jaw)*j)/vec2(ia,1.);
+  // 4) coils: a slow travelling wave along the serpentine body (right side of frame)
+  float coil=smoothstep(.45,.75,q.x)*body;
+  q+=vec2(sin(q.y*9.-t*.7),cos(q.x*7.-t*.6))*.006*coil;
+  return q;
+}
 void main(){
   vec2 uv=gl_FragCoord.xy/r;
   vec2 iu=cover(uv,1.08);
-  // the dragon breathes: a slow push/pull of the near layer against the smoke
-  vec2 cam=vec2(sin(t*.18)*.006,sin(t*.36)*.004)+(m-.5)*vec2(.02,.012);
+  vec2 cam=vec2(sin(t*.11)*.005,sin(t*.17)*.003)+(m-.5)*vec2(.02,.012);
   iu=parallax(iu,cam,.3);
-  float d=depthAt(iu);
+  float S=snarl(), B=breath();
+  vec2 q=rig(iu);
+  float d=depthAt(q);
   float body=smoothstep(.35,.6,d);
-  // flame mane: bright fiery areas lick upward and flicker
-  vec3 c0=textureLod(img,iu,1.).rgb;
-  float fire=smoothstep(.45,.85,c0.r)*smoothstep(.05,.35,c0.g);
-  vec2 lick=vec2((dn(vec2(iu.x*30.,iu.y*12.-t*1.6))-.5)*.006,(dn(vec2(iu.x*24.+5.,iu.y*10.-t*2.1))-.5)*.008-.002);
-  iu+=lick*fire;
-  // background smoke drifts slowly
-  vec2 sw=vec2(dn(iu*4.+vec2(t*.04,0.)),dn(iu*4.+vec2(3.,-t*.05)))-.5;
-  iu+=sw*.01*(1.-body);
-  vec3 c=textureLod(img,iu,0.).rgb;
-  c*=1.+fire*.15*(dn(vec2(iu.x*40.,t*3.))-.4);
-  // the eye smoulders
-  vec2 ed=(iu-EYE)*vec2(ia,1.);
-  float pulse=.55+.45*pow(.5+.5*sin(t*1.3),3.);
-  c+=vec3(1.,.35,.1)*exp(-dot(ed,ed)*2600.)*pulse*.9;
-  c+=vec3(1.,.15,.05)*exp(-dot(ed,ed)*260.)*pulse*.12;
-  // embers rising through the dark
+  // flame mane: fiery strands stream up-and-back, faster when it snarls
+  vec3 c0=textureLod(img,q,1.).rgb;
+  float fire=smoothstep(.45,.85,c0.r)*smoothstep(.06,.35,c0.g);
+  float sp=1.+1.5*S;
+  vec2 lick=vec2((dn(vec2(q.x*26.,q.y*10.-t*1.4*sp))-.5)*.007,(dn(vec2(q.x*20.+5.,q.y*9.-t*1.9*sp))-.5)*.009+.003*S);
+  q+=lick*fire;
+  // smoke behind drifts
+  q+=(vec2(dn(q*4.+vec2(t*.04,0.)),dn(q*4.+vec2(3.,-t*.05)))-.5)*.01*(1.-body);
+  vec3 c=textureLod(img,q,0.).rgb;
+  c*=1.+fire*(.12*(dn(vec2(q.x*40.,t*3.))-.4)+.18*S);
+  // eye: smoulders with the breath, flares on the snarl
+  vec2 ed=(q-EYE)*vec2(ia,1.);
+  float glow=.45+.35*B+.8*S;
+  c+=vec3(1.,.38,.1)*exp(-dot(ed,ed)*3000.)*glow;
+  c+=vec3(1.,.15,.05)*exp(-dot(ed,ed)*250.)*glow*.15;
+  // inner fire glows from the throat when the jaw opens
+  vec2 md=(iu-vec2(.296,.3))*vec2(ia,1.);
+  c+=vec3(1.,.42,.08)*exp(-dot(md,md)*420.)*S*.3;
+  // heat haze above the mane
+  // embers: rise, drift and twinkle; a burst of them on each snarl
   for(int i=0;i<3;i++){
     float fi=float(i);
-    vec2 g=gl_FragCoord.xy/r.y*vec2(55.+fi*20.)+vec2(t*(.3+fi*.2),-t*(1.2+fi*.6));
+    vec2 g=gl_FragCoord.xy/r.y*vec2(50.+fi*22.)+vec2(t*(.3+fi*.2)+sin(t*.5+fi)*.6,-t*(1.2+fi*.6));
     vec2 id=floor(g),f=fract(g)-.5;
     float rnd=hash(id+fi*13.);
     vec2 off=(vec2(hash(id+1.3),hash(id+7.1))-.5)*.6;
-    float e=smoothstep(.08,.0,length(f-off))*step(.9,rnd);
+    float e=smoothstep(.08,.0,length(f-off))*step(.9-.05*S,rnd);
     c+=vec3(1.,.5,.15)*e*(.5+.5*sin(t*6.+rnd*40.))*(1.-body*.6)*.9;
   }
-  fragColor=vec4(grain(c,.02),1.);
+  fragColor=vec4(grain(c,.018),1.);
 }
 `;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; };
