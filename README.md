@@ -88,5 +88,5 @@ python -m http.server 5173
 - [x] Reed Spectrum — teal/red/orange reeded glass (D20)
 - [x] Reed Flame — red/orange crossing light, reeded (D21)
 - [x] Sunset Ridge — orange sun behind dark peaks (D22)
-- [ ] Aurora — northern lights over a mirror lake (D23)
+- [x] Aurora — northern lights over a mirror lake (D23)
 - [ ] Stipple — dithered neon hills (D24)

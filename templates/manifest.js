@@ -36,4 +36,5 @@ window.TEMPLATES = [
   { slug:'evergreen', name:'Evergreen', tags:['image','depth','nature','nonprofit','climate'], poster:'url(templates/evergreen/scene.jpg) center/cover' },
   { slug:'twilight', name:'Twilight', tags:['image','sky','wedding','event','serif'], poster:'url(templates/twilight/scene.jpg) center/cover' },
   { slug:'sunset-ridge', name:'Sunset Ridge', tags:['image','depth','gaming','cinematic','dark'], poster:'url(templates/sunset-ridge/scene.jpg) center/cover' },
+  { slug:'aurora', name:'Aurora', tags:['image','depth','travel','night','luxury'], poster:'url(templates/aurora/scene.jpg) center/cover' },
 ];
