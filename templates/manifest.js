@@ -16,4 +16,5 @@ window.TEMPLATES = [
   { slug:'beam', name:'Beam', tags:['webgl','dark','red','minimal','product'], poster:'url(templates/beam/scene.jpg) 50% 50%/auto 100% no-repeat,#000' },
   { slug:'fluted', name:'Fluted', tags:['webgl','glass','refraction','interactive','privacy'], poster:'url(templates/fluted/scene.jpg) center/cover' },
   { slug:'reed-rose', name:'Reed Rose', tags:['webgl','glass','pastel','design','saas'], poster:'url(templates/reed-rose/scene.jpg) center/cover' },
+  { slug:'reed-crimson', name:'Reed Crimson', tags:['image','glass','music','album','dark'], poster:'url(templates/reed-crimson/scene.jpg) center/cover' },
 ];
