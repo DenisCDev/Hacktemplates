@@ -72,7 +72,7 @@ python -m http.server 5173
 - [x] Spectrum — rainbow wash, smoked glass waves (D4)
 - [x] Thermal — flowing heat bands (D5)
 - [x] Canyon Violet — layered violet ridges (D6)
-- [ ] Glacier — cracked blue ice (D7)
+- [ ] Glacier — cracked blue ice (D7) — source is a watermarked stock preview; needs a free/licensed ice photo
 - [ ] Fuji — mountain, cloud band, night lake (D8)
 - [x] Canyon Magenta — layered magenta ridges (D9)
 - [ ] Static — grainy orange/teal gradient (D10)
