@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hero templates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root { --bg:#09090b; --fg:#fafafa; --muted:#a1a1aa; --line:rgba(255,255,255,.08); }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { color-scheme:dark; }
+  body { background:var(--bg); color:var(--fg); font-family:Inter,system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+
+  header { max-width:1400px; margin:0 auto; padding:72px 28px 40px; }
+  header h1 { font-family:"Instrument Serif",serif; font-weight:400; font-size:clamp(44px,7vw,88px); line-height:.95; letter-spacing:-.02em; }
+  header h1 em { color:var(--muted); }
+  header p { margin-top:18px; color:var(--muted); max-width:560px; line-height:1.6; }
+
+  .filters { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+  .filters button { font:inherit; font-size:13px; color:var(--muted); background:transparent; border:1px solid var(--line); border-radius:999px; padding:7px 14px; cursor:pointer; transition:.2s; }
+  .filters button:hover { color:var(--fg); border-color:rgba(255,255,255,.2); }
+  .filters button[aria-pressed="true"] { color:#000; background:var(--fg); border-color:var(--fg); }
+
+  main { max-width:1400px; margin:0 auto; padding:0 28px 120px; display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:28px; }
+  .card { display:block; }
+  .frame { position:relative; aspect-ratio:16/10; border-radius:14px; overflow:hidden; border:1px solid var(--line); background-size:cover; background-position:center; transition:transform .5s cubic-bezier(.2,.7,.2,1), border-color .3s; }
+  .card:hover .frame { transform:translateY(-4px); border-color:rgba(255,255,255,.2); }
+  .frame iframe { position:absolute; top:0; left:0; width:1440px; height:900px; border:0; transform-origin:0 0; pointer-events:none; opacity:0; transition:opacity .6s; }
+  .frame iframe.ready { opacity:1; }
+  .frame .num { position:absolute; top:12px; left:14px; font-size:12px; color:rgba(255,255,255,.7); mix-blend-mode:difference; }
+  .meta { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:14px 2px 0; }
+  .meta h2 { font-size:15px; font-weight:500; }
+  .meta span { font-size:12px; color:var(--muted); }
+  .empty { color:var(--muted); grid-column:1/-1; }
+  @media (max-width:480px){ main{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Hero sections, <em>ready to ship.</em></h1>
+  <p>Self-contained, zero-build landing heroes. Shaders, motion, and type. Open one, copy the folder, change the words.</p>
+  <div class="filters" id="filters"></div>
+</header>
+<main id="grid"></main>
+
+<script src="templates/manifest.js"></script>
+<script>
+  const list = window.TEMPLATES || [];
+  const grid = document.getElementById('grid');
+  const filters = document.getElementById('filters');
+  let active = 'all';
+
+  const tags = ['all', ...new Set(list.flatMap(t => t.tags))];
+  filters.innerHTML = tags.map(t => `<button aria-pressed="${t === active}" data-tag="${t}">${t}</button>`).join('');
+  filters.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    active = b.dataset.tag;
+    filters.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    render();
+  });
+
+  function render() {
+    const items = list.filter(t => active === 'all' || t.tags.includes(active));
+    if (!items.length) { grid.innerHTML = '<p class="empty">Nothing here yet.</p>'; return; }
+    grid.innerHTML = items.map(t => `
+      <a class="card" href="templates/${t.slug}/" data-slug="${t.slug}">
+        <div class="frame" style="background:${t.poster}"><span class="num">${String(list.indexOf(t) + 1).padStart(2, '0')}</span></div>
+        <div class="meta"><h2>${t.name}</h2><span>${t.tags.join(' · ')}</span></div>
+      </a>`).join('');
+  }
+  render();
+
+  // Live preview: mount one iframe on hover/focus. Browsers cap WebGL contexts, so never keep many alive.
+  let live = null;
+  function fit(frame, iframe) { iframe.style.transform = `scale(${frame.clientWidth / 1440})`; }
+  function mount(card) {
+    if (live && live.card === card) return;
+    unmount();
+    const frame = card.querySelector('.frame');
+    const iframe = document.createElement('iframe');
+    iframe.src = `templates/${card.dataset.slug}/`;
+    iframe.loading = 'eager';
+    iframe.tabIndex = -1;
+    iframe.onload = () => setTimeout(() => iframe.classList.add('ready'), 250);
+    frame.appendChild(iframe);
+    fit(frame, iframe);
+    live = { card, iframe };
+  }
+  function unmount() { if (live) { live.iframe.remove(); live = null; } }
+  grid.addEventListener('pointerover', e => { const c = e.target.closest('.card'); if (c) mount(c); });
+  grid.addEventListener('focusin', e => { const c = e.target.closest('.card'); if (c) mount(c); });
+  grid.addEventListener('pointerleave', unmount);
+  addEventListener('resize', () => live && fit(live.card.querySelector('.frame'), live.iframe));
+</script>
+</body>
+</html>
