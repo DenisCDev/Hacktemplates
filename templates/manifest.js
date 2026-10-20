@@ -44,4 +44,5 @@ window.TEMPLATES = [
   { slug:'ukiyo', name:'Ukiyo', tags:['image','water','restaurant','japan','minimal'], poster:'url(templates/ukiyo/scene.jpg) center/cover' },
   { slug:'glitch', name:'Glitch', tags:['image','art','exhibition','glitch','poster'], poster:'url(templates/glitch/scene.jpg) center/cover' },
   { slug:'ruins', name:'Ruins', tags:['image','depth','fantasy','gaming','cinematic'], poster:'url(templates/ruins/scene.jpg) center/cover' },
+  { slug:'red-dragon', name:'Red Dragon', tags:['image','depth','fantasy','book','fire'], poster:'url(templates/red-dragon/scene.jpg) center/cover' },
 ];

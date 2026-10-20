@@ -60,7 +60,7 @@ python -m http.server 5173
 - [x] Fluted — reeded glass refraction
 - [x] Glitch — chromatic visor glitch
 - [x] Ruins — fantasy ruins above the clouds
-- [ ] Red Dragon — fire dragon
+- [x] Red Dragon — fire dragon
 - [ ] Desert Dragon — dragon against the sun
 - [ ] Ink Dragon — ink-wash dragon
 - [ ] Smoke Dragon — dragon dissolving into smoke
