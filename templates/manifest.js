@@ -37,4 +37,5 @@ window.TEMPLATES = [
   { slug:'twilight', name:'Twilight', tags:['image','sky','wedding','event','serif'], poster:'url(templates/twilight/scene.jpg) center/cover' },
   { slug:'sunset-ridge', name:'Sunset Ridge', tags:['image','depth','gaming','cinematic','dark'], poster:'url(templates/sunset-ridge/scene.jpg) center/cover' },
   { slug:'aurora', name:'Aurora', tags:['image','depth','travel','night','luxury'], poster:'url(templates/aurora/scene.jpg) center/cover' },
+  { slug:'stipple', name:'Stipple', tags:['image','dither','creative','code','art'], poster:'url(templates/stipple/scene.jpg) center/cover' },
 ];
