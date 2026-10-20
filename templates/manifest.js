@@ -11,4 +11,5 @@ window.TEMPLATES = [
   { slug:'daybreak', name:'Daybreak', tags:['webgl','glow','waitlist','coming-soon','dark'], poster:'radial-gradient(90% 75% at 48% 115%,#ffd660,#ff9f0a 35%,#b0490a 55%,#3a1408 70%,#121010 85%)' },
   { slug:'abyss', name:'Abyss', tags:['webgl','water','dark','data','saas'], poster:'linear-gradient(180deg,#020708,#04201f 45%,#11605c 80%,#3fc7bd)' },
   { slug:'dusk', name:'Dusk', tags:['webgl','gradient','portfolio','serif','personal'], poster:'linear-gradient(155deg,#4d5e6b,#6f7a8c 30%,#9a7878 55%,#d47a2b 80%,#c25c10)' },
+  { slug:'aura', name:'Aura', tags:['webgl','orb','light','app','wellness'], poster:'radial-gradient(circle at 68% 50%,#ffb21a 0,#ff5a1f 14%,#ff9f88 26%,#ffe3ec 40%,#fffdf9 58%)' },
 ];
