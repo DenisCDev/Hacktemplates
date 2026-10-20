@@ -74,7 +74,7 @@ python -m http.server 5173
 - [x] Canyon Violet — layered violet ridges (D6)
 - [ ] Glacier — cracked blue ice (D7)
 - [ ] Fuji — mountain, cloud band, night lake (D8)
-- [ ] Canyon Magenta — layered magenta ridges (D9)
+- [x] Canyon Magenta — layered magenta ridges (D9)
 - [ ] Static — grainy orange/teal gradient (D10)
 - [ ] Tidewave — bold red/blue/gold waves (D11)
 - [x] Reed Rose — pink/lavender reeded glass (D12)

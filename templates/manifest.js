@@ -26,4 +26,5 @@ window.TEMPLATES = [
   { slug:'spectrum', name:'Spectrum', tags:['image','gradient','newsletter','editorial','serif'], poster:'url(templates/spectrum/scene.jpg) center/cover' },
   { slug:'thermal', name:'Thermal', tags:['image','gradient','devtool','infra','bold'], poster:'url(templates/thermal/scene.jpg) center/cover' },
   { slug:'canyon-violet', name:'Canyon Violet', tags:['image','depth','mac','app','productivity'], poster:'url(templates/canyon-violet/scene.jpg) center/cover' },
+  { slug:'canyon-magenta', name:'Canyon Magenta', tags:['image','depth','ai','chat','app'], poster:'url(templates/canyon-magenta/scene.jpg) center/cover' },
 ];
