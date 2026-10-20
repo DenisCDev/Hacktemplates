@@ -68,7 +68,7 @@ python -m http.server 5173
 - [ ] Ash King — crowned king, storm sky
 - [x] Redwood — sunlit redwoods, drifting mist (D1)
 - [x] Silk — sculpted white ribbon, orange glow (D2)
-- [ ] Stratosphere — night blue to dawn horizon (D3)
+- [x] Stratosphere — night blue to dawn horizon (D3)
 - [ ] Spectrum — rainbow wash, smoked glass waves (D4)
 - [ ] Thermal — flowing heat bands (D5)
 - [ ] Canyon Violet — layered violet ridges (D6)
