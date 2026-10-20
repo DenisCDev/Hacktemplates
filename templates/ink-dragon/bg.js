@@ -92,8 +92,13 @@ vec2 rig(vec2 q){
 }
 void main(){
   vec2 uv=gl_FragCoord.xy/r;
-  vec2 iu=cover(uv,1.04);
+  // place the painting at ~74% of the width on the left (full width on tall screens); the paper continues around it
+  float sa=r.x/r.y;
+  float W=sa>1.3?.76:1.02, X0=sa>1.3?-.02:-.01;
+  vec2 iu=vec2((uv.x-X0)/W,(uv.y-.5)*sa/(W*ia)+.5+(sa>1.3?.0:.18));
   iu+=(m-.5)*vec2(.006,.004);
+  float inside=smoothstep(0.,.05,iu.x)*smoothstep(1.,.78,iu.x)*smoothstep(0.,.14,iu.y)*smoothstep(1.,.8,iu.y);
+  inside=pow(inside,.7);
   vec2 q=rig(iu);
   // smoky wash (mid-greys): ink diffusing in water — curl flow, drifting up/right, never touches the solid strokes
   float lum0=dot(textureLod(img,q,2.).rgb,vec3(.33));
@@ -109,7 +114,7 @@ void main(){
   float field=length((iu-HEAD)*vec2(ia,1.))/1.25+(dn(iu*9.)-.5)*.18+(dn(iu*30.)-.5)*.05;
   float shown=smoothstep(field-.02,field+.06,p*1.12);
   float front=exp(-pow((p*1.12-field)*28.,2.))*(1.-step(1.,p));
-  vec3 inked=mix(paper,c,shown);
+  vec3 inked=mix(paper,c,shown*inside);
   inked=mix(inked,inked*.82,front*ink*.6);                 // wet edge darkens like fresh ink
   // paper fibre texture, static
   float fibre=dn(gl_FragCoord.xy*.35)*.5+dn(gl_FragCoord.xy*1.3)*.5;

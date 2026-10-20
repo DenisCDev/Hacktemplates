@@ -62,7 +62,7 @@ python -m http.server 5173
 - [x] Ruins — fantasy ruins above the clouds
 - [x] Red Dragon — fire dragon
 - [x] Desert Dragon — dragon against the sun
-- [ ] Ink Dragon — ink-wash dragon
+- [x] Ink Dragon — ink-wash dragon
 - [ ] Smoke Dragon — dragon dissolving into smoke
 - [ ] Pixel Sword — pixel-art sword in the forest
 - [ ] Ash King — crowned king, storm sky
