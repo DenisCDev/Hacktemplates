@@ -24,6 +24,7 @@ in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`;
 precision highp float;
 uniform sampler2D img;   // the scene image
 uniform sampler2D maps;  // per-template maps (R = depth, white = near)
+uniform sampler2D sky;   // optional clean background plate
 uniform vec2 r;          // canvas size, px
 uniform float t;         // seconds
 uniform vec2 m;          // pointer 0..1, smoothed
@@ -64,15 +65,15 @@ vec2 drift(vec2 iu,float amp,float speed){
   return iu;
 }
 // sample with optional blur (mip bias) — gradients with baked grain read cleaner blurred, then fresh grain on top
-vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod).rgb;}
-vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt;}
+vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod*.2).rgb;}   // near-full detail: the image is the hero
+vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt*.55;}   // light dither only
 void main(){
   vec2 uv=gl_FragCoord.xy/r;
   vec2 iu=cover(uv,1.06);
   iu=drift(iu,.035,.05);                               // gentle, so the disc edge stays put for the orbit rings
   vec3 c=soft(iu,2.5);
   vec2 g=gl_FragCoord.xy+fract(t*9.)*100.;              // chunky film grain, slightly different per channel
-  c+=(vec3(hash(g),hash(g+17.),hash(g+31.))-.5)*.12;
+  c+=(vec3(hash(g),hash(g+17.),hash(g+31.))-.5)*.07;
   fragColor=vec4(c,1.);
 }
 `;
@@ -87,8 +88,9 @@ void main(){
   gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   const U = n => gl.getUniformLocation(prog, n);
   const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
-  gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1);
+  gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1); gl.uniform1i(U('sky'), 2);
 
+  const aniso = gl.getExtension('EXT_texture_filter_anisotropic');   // keeps warped/displaced texture sharp
   const load = (src, unit) => new Promise(res => {
     if (!src) return res(null);
     const im = new Image();
@@ -103,13 +105,14 @@ void main(){
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
       res(im);
     };
     im.onerror = () => res(null);
     im.src = base + src;
   });
 
-  const SCALE = 0.75; // render scale vs CSS pixels (× devicePixelRatio, capped)
+  const SCALE = 1.0; // render at full device resolution (× devicePixelRatio, capped at 2)
   const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
@@ -118,7 +121,7 @@ void main(){
   new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(canvas);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  Promise.all([load('scene.jpg', 0), load(null, 1)]).then(([im]) => {
+  Promise.all([load('scene.jpg', 0), load(null, 1), load(null, 2)]).then(([im]) => {
     if (!im) return;
     gl.uniform1f(uia, im.width / im.height);
     gl.uniform2f(uo, focus[0], focus[1]);
