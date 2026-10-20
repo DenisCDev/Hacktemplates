@@ -67,7 +67,7 @@ python -m http.server 5173
 - [ ] Pixel Sword — pixel-art sword in the forest
 - [ ] Ash King — crowned king, storm sky
 - [x] Redwood — sunlit redwoods, drifting mist (D1)
-- [ ] Silk — sculpted white ribbon, orange glow (D2)
+- [x] Silk — sculpted white ribbon, orange glow (D2)
 - [ ] Stratosphere — night blue to dawn horizon (D3)
 - [ ] Spectrum — rainbow wash, smoked glass waves (D4)
 - [ ] Thermal — flowing heat bands (D5)
