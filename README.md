@@ -52,7 +52,7 @@ python -m http.server 5173
 - [ ] Phantom — red face dissolving into particles
 - [x] Grotto — cave waterfall, light shafts
 - [x] Meadow — handheld console in a flower field
-- [ ] Pocket — 3D retro handheld
+- [x] Pocket — 3D retro handheld
 - [ ] Ukiyo — pagoda light pillars, water reflection
 - [x] Aura — soft orange orb, light theme
 - [x] Solstice — giant sun, tiny figure
