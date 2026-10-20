@@ -47,4 +47,5 @@ window.TEMPLATES = [
   { slug:'red-dragon', name:'Red Dragon', tags:['image','depth','fantasy','book','fire'], poster:'url(templates/red-dragon/scene.jpg) center/cover' },
   { slug:'desert-dragon', name:'Desert Dragon', tags:['image','rig','fantasy','gaming','cinematic'], poster:'url(templates/desert-dragon/scene.jpg) center/cover' },
   { slug:'ink-dragon', name:'Ink Dragon', tags:['image','rig','ink','light','tattoo'], poster:'url(templates/ink-dragon/scene.jpg) 0% 50%/76% auto no-repeat,#efefed' },
+  { slug:'smoke-dragon', name:'Smoke Dragon', tags:['image','rig','smoke','light','ai'], poster:'url(templates/smoke-dragon/scene.jpg) 66% 50%/auto 100% no-repeat,#f0f2f4' },
 ];
