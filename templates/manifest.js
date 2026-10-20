@@ -23,4 +23,5 @@ window.TEMPLATES = [
   { slug:'redwood', name:'Redwood', tags:['image','depth','nature','travel','booking'], poster:'url(templates/redwood/scene.jpg) center/cover' },
   { slug:'silk', name:'Silk', tags:['image','depth','light','product','keynote'], poster:'url(templates/silk/scene.jpg) center/cover' },
   { slug:'stratosphere', name:'Stratosphere', tags:['image','sky','space','launch','countdown'], poster:'url(templates/stratosphere/scene.jpg) center/cover' },
+  { slug:'spectrum', name:'Spectrum', tags:['image','gradient','newsletter','editorial','serif'], poster:'url(templates/spectrum/scene.jpg) center/cover' },
 ];

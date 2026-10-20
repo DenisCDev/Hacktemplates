@@ -69,7 +69,7 @@ python -m http.server 5173
 - [x] Redwood — sunlit redwoods, drifting mist (D1)
 - [x] Silk — sculpted white ribbon, orange glow (D2)
 - [x] Stratosphere — night blue to dawn horizon (D3)
-- [ ] Spectrum — rainbow wash, smoked glass waves (D4)
+- [x] Spectrum — rainbow wash, smoked glass waves (D4)
 - [ ] Thermal — flowing heat bands (D5)
 - [ ] Canyon Violet — layered violet ridges (D6)
 - [ ] Glacier — cracked blue ice (D7)
