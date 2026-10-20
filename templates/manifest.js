@@ -31,4 +31,5 @@ window.TEMPLATES = [
   { slug:'fuji', name:'Fuji', tags:['image','landscape','japan','education','app'], poster:'url(templates/fuji/scene.jpg) center/cover' },
   { slug:'static', name:'Static', tags:['image','grain','podcast','audio','bold'], poster:'url(templates/static/scene.jpg) center/cover' },
   { slug:'tidewave', name:'Tidewave', tags:['image','depth','saas','dashboard','colorful'], poster:'url(templates/tidewave/scene.jpg) center/cover' },
+  { slug:'sandstorm', name:'Sandstorm', tags:['image','flow','fashion','ecommerce','light'], poster:'url(templates/sandstorm/scene.jpg) center/cover' },
 ];
