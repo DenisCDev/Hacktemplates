@@ -56,7 +56,7 @@ python -m http.server 5173
 - [ ] Ukiyo — pagoda light pillars, water reflection
 - [x] Aura — soft orange orb, light theme
 - [x] Solstice — giant sun, tiny figure
-- [ ] Beam — red light beam, lone figure
+- [x] Beam — red light beam, lone figure
 - [ ] Fluted — reeded glass refraction
 - [ ] Glitch — chromatic visor glitch
 - [ ] Ruins — fantasy ruins above the clouds
