@@ -57,7 +57,7 @@ python -m http.server 5173
 - [x] Aura — soft orange orb, light theme
 - [x] Solstice — giant sun, tiny figure
 - [x] Beam — red light beam, lone figure
-- [ ] Fluted — reeded glass refraction
+- [x] Fluted — reeded glass refraction
 - [ ] Glitch — chromatic visor glitch
 - [ ] Ruins — fantasy ruins above the clouds
 - [ ] Red Dragon — fire dragon
