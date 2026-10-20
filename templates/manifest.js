@@ -4,7 +4,7 @@ window.TEMPLATES = [
   { slug:'aurora-horizon', name:'Aurora Horizon', tags:['webgl','gradient','dark','saas'], poster:'url(templates/aurora-horizon/scene.jpg) center/cover' },
   { slug:'ultraviolet', name:'Ultraviolet', tags:['webgl','gradient','grain','dark','ai'], poster:'url(templates/ultraviolet/scene.jpg) center/cover' },
   { slug:'eclipse', name:'Eclipse', tags:['webgl','gradient','grain','editorial','light'], poster:'url(templates/eclipse/scene.jpg) center/cover' },
-  { slug:'ember', name:'Ember', tags:['webgl','gradient','event','hackathon','bold'], poster:'linear-gradient(145deg,#fff2c7,#fb7a22 14%,#b8260d 34%,#45040f 52%,#73218a 66%,#8585e6 82%,#c2d6fd)' },
+  { slug:'ember', name:'Ember', tags:['webgl','gradient','event','hackathon','bold'], poster:'url(templates/ember/scene.jpg) center/cover' },
   { slug:'bokeh', name:'Bokeh', tags:['webgl','dark','ai','prompt','glass'], poster:'radial-gradient(40% 40% at 40% 72%,#16b4c6,transparent),radial-gradient(22% 22% at 30% 30%,#f0857a,transparent),radial-gradient(25% 22% at 90% 8%,#e85cb8,transparent),radial-gradient(25% 22% at 8% 8%,#2e6cdb,transparent),#1d1c21' },
   { slug:'prism', name:'Prism', tags:['webgl','gradient','neon','agency','bold'], poster:'conic-gradient(from 200deg at 47% 53%,#ff0029,#ff6100,#0df226,#d1ff4d,#bf0d1f,#05031a,#05066b,#5200a0,#d9007f,#ff0029)' },
   { slug:'nimbus', name:'Nimbus', tags:['webgl','clouds','devtool','serif','dark'], poster:'linear-gradient(100deg,#ece0cf,#d9c3a8 30%,#3b4a52 48%,#161d22 70%)' },
