@@ -82,7 +82,7 @@ python -m http.server 5173
 - [ ] Sandstorm — swept amber smoke (D14)
 - [x] Reed Ember — orange band behind reeded glass (D15)
 - [ ] Riptide — grainy navy wave (D16)
-- [ ] Canyon Blue — layered blue ridges (D17)
+- [x] Canyon Blue — layered blue ridges (D17)
 - [ ] Evergreen — misty pine forest (D18)
 - [ ] Twilight — violet to peach sky (D19)
 - [x] Reed Spectrum — teal/red/orange reeded glass (D20)
