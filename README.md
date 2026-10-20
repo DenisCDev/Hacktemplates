@@ -50,7 +50,7 @@ python -m http.server 5173
 - [ ] Nightwalk — stars, billowing clouds, lone walker
 - [ ] Commute — anime train window, passing fields
 - [ ] Phantom — red face dissolving into particles
-- [ ] Grotto — cave waterfall, light shafts
+- [x] Grotto — cave waterfall, light shafts
 - [ ] Meadow — handheld console in a flower field
 - [ ] Pocket — 3D retro handheld
 - [ ] Ukiyo — pagoda light pillars, water reflection
