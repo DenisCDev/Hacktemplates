@@ -51,7 +51,7 @@ python -m http.server 5173
 - [ ] Commute — anime train window, passing fields
 - [ ] Phantom — red face dissolving into particles
 - [x] Grotto — cave waterfall, light shafts
-- [ ] Meadow — handheld console in a flower field
+- [x] Meadow — handheld console in a flower field
 - [ ] Pocket — 3D retro handheld
 - [ ] Ukiyo — pagoda light pillars, water reflection
 - [x] Aura — soft orange orb, light theme
