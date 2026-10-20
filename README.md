@@ -53,7 +53,7 @@ python -m http.server 5173
 - [x] Grotto — cave waterfall, light shafts
 - [x] Meadow — handheld console in a flower field
 - [x] Pocket — 3D retro handheld
-- [ ] Ukiyo — pagoda light pillars, water reflection
+- [x] Ukiyo — pagoda light pillars, water reflection
 - [x] Aura — soft orange orb, light theme
 - [x] Solstice — giant sun, tiny figure
 - [x] Beam — red light beam, lone figure
