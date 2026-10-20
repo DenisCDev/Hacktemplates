@@ -58,7 +58,7 @@ python -m http.server 5173
 - [x] Solstice — giant sun, tiny figure
 - [x] Beam — red light beam, lone figure
 - [x] Fluted — reeded glass refraction
-- [ ] Glitch — chromatic visor glitch
+- [x] Glitch — chromatic visor glitch
 - [ ] Ruins — fantasy ruins above the clouds
 - [ ] Red Dragon — fire dragon
 - [ ] Desert Dragon — dragon against the sun
