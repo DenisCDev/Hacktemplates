@@ -24,6 +24,7 @@ in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`;
 precision highp float;
 uniform sampler2D img;   // the scene image
 uniform sampler2D maps;  // per-template maps (R = depth, white = near)
+uniform sampler2D sky;   // optional clean background plate
 uniform vec2 r;          // canvas size, px
 uniform float t;         // seconds
 uniform vec2 m;          // pointer 0..1, smoothed
@@ -64,8 +65,8 @@ vec2 drift(vec2 iu,float amp,float speed){
   return iu;
 }
 // sample with optional blur (mip bias) — gradients with baked grain read cleaner blurred, then fresh grain on top
-vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod).rgb;}
-vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt;}
+vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod*.2).rgb;}   // near-full detail: the image is the hero
+vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt*.55;}   // light dither only
 // Flow-map advection: the texture streams along \`dir\` forever without sliding off the image.
 // Two copies offset half a cycle apart crossfade, so the reset of each is never visible.
 // iu: image uv, dir: flow direction (image uv units / cycle), period: seconds per cycle, lod: blur
@@ -73,8 +74,8 @@ vec3 flowSample(vec2 iu,vec2 dir,float period,float lod){
   float ph=fract(t/period);
   float ph2=fract(t/period+.5);
   float w=abs(ph-.5)*2.;                                 // weight of copy 2 (0 when copy 1 is mid-cycle)
-  vec3 a=textureLod(img,iu-dir*(ph-.5),lod).rgb;
-  vec3 b=textureLod(img,iu-dir*(ph2-.5),lod).rgb;
+  vec3 a=textureLod(img,iu-dir*(ph-.5),lod*.4).rgb;
+  vec3 b=textureLod(img,iu-dir*(ph2-.5),lod*.4).rgb;
   return mix(a,b,w);
 }
 // Depth parallax from maps.r (white = near). The screen point s shows image point i where
@@ -131,8 +132,9 @@ void main(){
   gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
   const U = n => gl.getUniformLocation(prog, n);
   const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
-  gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1);
+  gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1); gl.uniform1i(U('sky'), 2);
 
+  const aniso = gl.getExtension('EXT_texture_filter_anisotropic');   // keeps warped/displaced texture sharp
   const load = (src, unit) => new Promise(res => {
     if (!src) return res(null);
     const im = new Image();
@@ -147,13 +149,14 @@ void main(){
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
       res(im);
     };
     im.onerror = () => res(null);
     im.src = base + src;
   });
 
-  const SCALE = 1.0; // render scale vs CSS pixels (× devicePixelRatio, capped)
+  const SCALE = 1.0; // render at full device resolution (× devicePixelRatio, capped at 2)
   const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
@@ -162,7 +165,7 @@ void main(){
   new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(canvas);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  Promise.all([load('scene.jpg', 0), load(null, 1)]).then(([im]) => {
+  Promise.all([load('scene.jpg', 0), load(null, 1), load(null, 2)]).then(([im]) => {
     if (!im) return;
     gl.uniform1f(uia, im.width / im.height);
     gl.uniform2f(uo, focus[0], focus[1]);
