@@ -65,8 +65,8 @@ vec2 drift(vec2 iu,float amp,float speed){
   return iu;
 }
 // sample with optional blur (mip bias) — gradients with baked grain read cleaner blurred, then fresh grain on top
-vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod).rgb;}
-vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt;}
+vec3 soft(vec2 iu,float lod){return textureLod(img,iu,lod*.2).rgb;}   // near-full detail: the image is the hero
+vec3 grain(vec3 c,float amt){return c+(hash(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*amt*.55;}   // light dither only
 // Depth parallax from maps.r (white = near). The screen point s shows image point i where
 // s = i + cam*(depth(i) - focal). Solve for i with a few fixed-point steps: near layers slide
 // over far ones with no tearing, the way a real camera move would.
@@ -142,6 +142,7 @@ void main(){
   const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
   gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1); gl.uniform1i(U('sky'), 2);
 
+  const aniso = gl.getExtension('EXT_texture_filter_anisotropic');   // keeps warped/displaced texture sharp
   const load = (src, unit) => new Promise(res => {
     if (!src) return res(null);
     const im = new Image();
@@ -156,13 +157,14 @@ void main(){
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
       res(im);
     };
     im.onerror = () => res(null);
     im.src = base + src;
   });
 
-  const SCALE = 1.0; // render scale vs CSS pixels (× devicePixelRatio, capped)
+  const SCALE = 1.0; // render at full device resolution (× devicePixelRatio, capped at 2)
   const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 

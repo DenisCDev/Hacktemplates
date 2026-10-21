@@ -108,17 +108,28 @@ vec3 strike(){
 void main(){
   vec2 uv=gl_FragCoord.xy/r;
   vec2 iu=cover(uv,1.08);
-  iu=parallax(iu,camMove(.008,.08),.2);
+  // camera drift: only the helmet field slides (the king stands on the horizon, locked with the sky)
+  vec2 cam=camMove(.01,.08);
+  float fg=smoothstep(.36,.22,iu.y);
+  { vec2 i=iu; for(int k=0;k<4;k++){ i=iu-cam*(depthAt(i)*fg-.1*fg); } iu=i; }
   float d=depthAt(iu);
-  float sky=(1.-smoothstep(.06,.14,d))*smoothstep(.3,.42,iu.y);
+  float lum0=dot(textureLod(img,iu,0.).rgb,vec3(.33));
+  float sky=smoothstep(.3,.42,iu.y)*smoothstep(.1,.24,lum0);   // the king is near-black: never sky
   // storm wheels slowly around the light, pulling inward a touch
   vec2 rel=(iu-LIGHT)*vec2(ia,1.);
   float rr=length(rel);
   vec2 tang=vec2(-rel.y,rel.x)/max(rr,1e-3);
   vec2 dir=(tang*.045-rel/max(rr,1e-3)*.012)*smoothstep(.05,.25,rr)/vec2(ia,1.);
+  float nearK=smoothstep(.3,.5,dot(textureLod(img,iu,5.).rgb,vec3(.33)));   // fades to 0 close to the king's silhouette
+  dir*=nearK;
   float ph=fract(t/10.), ph2=fract(t/10.+.5), w=abs(ph-.5)*2.;
-  vec2 cw=(vec2(dn(iu*6.+t*.05),dn(iu*6.-t*.04+3.))-.5)*.006;
-  vec3 skyc=mix(textureLod(img,iu+cw-dir*(ph-.5),0.).rgb,textureLod(img,iu+cw-dir*(ph2-.5),0.).rgb,w);
+  vec2 cw=(vec2(dn(iu*6.+t*.05),dn(iu*6.-t*.04+3.))-.5)*.006*nearK;
+  vec3 so=textureLod(img,iu,0.).rgb;
+  vec3 s1=textureLod(img,iu+cw-dir*(ph-.5),0.).rgb, s2=textureLod(img,iu+cw-dir*(ph2-.5),0.).rgb;
+  // each flow sample only counts if it is itself sky (bright); otherwise use the still sky here
+  s1=mix(so,s1,smoothstep(.2,.32,dot(s1,vec3(.33))));
+  s2=mix(so,s2,smoothstep(.2,.32,dot(s2,vec3(.33))));
+  vec3 skyc=mix(s1,s2,w);
   // the cape billows in the wind
   float cape=step(CAPE.x,iu.x)*step(iu.x,CAPE.z)*step(CAPE.y,iu.y)*step(iu.y,CAPE.w)*smoothstep(.25,.4,d);
   float wave=sin(iu.y*38.-t*2.2+iu.x*20.)*.5+sin(iu.y*21.-t*1.4)*.5;
@@ -133,7 +144,7 @@ void main(){
   vec2 sd=(iu-s.xy)*vec2(ia,1.);
   c+=vec3(.82,.88,1.)*s.z*(exp(-dot(sd,sd)*9.)*.9+.12)*sky;
   float lum=dot(c,vec3(.33));
-  float ground=smoothstep(.1,.3,d);
+  float ground=smoothstep(.1,.3,d)*(1.-sky)*smoothstep(.36,.3,iu.y);   // helmets only, never the sky edge
   c+=vec3(.75,.82,1.)*s.z*ground*smoothstep(.12,.4,lum)*.35;
   // crown glint
   vec2 cd=(iu-CROWN)*vec2(ia,1.);
