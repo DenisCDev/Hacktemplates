@@ -69,7 +69,8 @@
     unmount(); render();
   });
 
-  const tags = ['all', ...new Set(list.flatMap(t => t.tags))];
+  const counts = {}; list.forEach(t => t.tags.forEach(g => counts[g] = (counts[g] || 0) + 1));
+  const tags = ['all', ...Object.keys(counts).filter(g => counts[g] >= 3 && g !== 'image' && g !== 'webgl').sort((a, b) => counts[b] - counts[a])];
   filters.innerHTML = tags.map(t => `<button aria-pressed="${t === active}" data-tag="${t}">${t}</button>`).join('');
   filters.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
