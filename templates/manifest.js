@@ -51,4 +51,5 @@ window.TEMPLATES = [
   { slug:'pixel-sword', name:'Pixel Sword', tags:['image','pixel','gaming','hackathon','jam'], poster:'url(templates/pixel-sword/scene.jpg) center/cover' },
   { slug:'ash-king', name:'Ash King', tags:['image','depth','dark','chess','storm'], poster:'url(templates/ash-king/scene.jpg) center/cover' },
   { slug:'mercury', name:'Mercury', tags:['webgl','3d','raymarch','ai','dark'], poster:'radial-gradient(30% 40% at 50% 45%,#c9cad6,#5a5b6a 40%,#1a1030 70%,#030305)' },
+  { slug:'orbit-globe', name:'Orbit', tags:['webgl','3d','globe','fintech','dark'], poster:'radial-gradient(38% 55% at 78% 62%,#123064,#06102a 60%,#03060f 75%)' },
 ];
