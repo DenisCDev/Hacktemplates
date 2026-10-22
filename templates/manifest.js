@@ -53,4 +53,5 @@ window.TEMPLATES = [
   { slug:'mercury', name:'Mercury', tags:['webgl','3d','raymarch','ai','dark'], poster:'radial-gradient(30% 40% at 50% 45%,#c9cad6,#5a5b6a 40%,#1a1030 70%,#030305)' },
   { slug:'orbit-globe', name:'Orbit', tags:['webgl','3d','globe','fintech','dark'], poster:'radial-gradient(38% 55% at 78% 62%,#123064,#06102a 60%,#03060f 75%)' },
   { slug:'prism-glass', name:'Prism Glass', tags:['webgl','3d','raymarch','glass','light'], poster:'radial-gradient(28% 40% at 72% 50%,#fff,#d9d4ff 40%,transparent 60%),radial-gradient(30% 40% at 40% 25%,#ffc4b0,transparent),#f2f1f8' },
+  { slug:'event-horizon', name:'Event Horizon', tags:['webgl','3d','raymarch','space','dark'], poster:'radial-gradient(6% 10% at 66% 50%,#000 70%,#fff3e0 78%,#ffb36b 84%,transparent 92%),radial-gradient(34% 5% at 60% 52%,#ffd9b0,#c8621f 50%,transparent),#05030a' },
 ];

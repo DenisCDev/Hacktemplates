@@ -11,7 +11,7 @@
     document.body.prepend(canvas);
   }
   const gl = canvas.getContext('webgl', { antialias:false, alpha:false });
-  if (!gl) { canvas.style.background = 'radial-gradient(7% 11% at 68% 50%,#000 60%,#ffb36b 75%,transparent),radial-gradient(28% 6% at 68% 50%,#ff8a3d,transparent),#000'; return; }
+  if (!gl) { canvas.style.background = 'radial-gradient(7% 11% at 72% 50%,#000 60%,#ffb36b 75%,transparent),radial-gradient(28% 6% at 72% 50%,#ff8a3d,transparent),#000'; return; }
 
   const vert = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
   const frag = `
@@ -37,7 +37,7 @@ vec3 sky(vec3 d){
     float h=h21(id+float(k)*31.);
     vec2 o=(vec2(h21(id+3.),h21(id+7.))-.5)*.7;
     float s=smoothstep(.13,.0,length(f-o))*step(.94,h);
-    c+=mix(vec3(1.,.85,.7),vec3(.72,.82,1.),h21(id+11.))*s*(.35+1.6*(h-.94)/.06);
+    c+=mix(vec3(1.,.85,.7),vec3(.72,.82,1.),h21(id+11.))*s*(.2+1.*(h-.94)/.06);
   }
   return c;
 }
@@ -61,7 +61,7 @@ vec4 disk(vec3 p,vec3 vdir){
 void main(){
   vec2 uv=(gl_FragCoord.xy-.5*r)/r.y;
   float sa=r.x/r.y;
-  uv-=sa>1.2?vec2(.26,.02):vec2(0.,.12);
+  uv-=sa>1.2?vec2(.36,.02):vec2(0.,.12);
   float yaw=t*.015+(m.x-.5)*.5, pitch=.1+(m.y-.5)*.12;
   vec3 ro=vec3(sin(yaw)*cos(pitch),sin(pitch),cos(yaw)*cos(pitch))*27.;
   vec3 fw=normalize(-ro), rt=normalize(cross(vec3(0.,1.,0.),fw)), up=cross(fw,rt);
