@@ -50,4 +50,5 @@ window.TEMPLATES = [
   { slug:'smoke-dragon', name:'Smoke Dragon', tags:['image','rig','smoke','light','ai'], poster:'url(templates/smoke-dragon/scene.jpg) center/cover' },
   { slug:'pixel-sword', name:'Pixel Sword', tags:['image','pixel','gaming','hackathon','jam'], poster:'url(templates/pixel-sword/scene.jpg) center/cover' },
   { slug:'ash-king', name:'Ash King', tags:['image','depth','dark','chess','storm'], poster:'url(templates/ash-king/scene.jpg) center/cover' },
+  { slug:'mercury', name:'Mercury', tags:['webgl','3d','raymarch','ai','dark'], poster:'radial-gradient(30% 40% at 50% 45%,#c9cad6,#5a5b6a 40%,#1a1030 70%,#030305)' },
 ];
