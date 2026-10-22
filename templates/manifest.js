@@ -52,4 +52,5 @@ window.TEMPLATES = [
   { slug:'ash-king', name:'Ash King', tags:['image','depth','dark','chess','storm'], poster:'url(templates/ash-king/scene.jpg) center/cover' },
   { slug:'mercury', name:'Mercury', tags:['webgl','3d','raymarch','ai','dark'], poster:'radial-gradient(30% 40% at 50% 45%,#c9cad6,#5a5b6a 40%,#1a1030 70%,#030305)' },
   { slug:'orbit-globe', name:'Orbit', tags:['webgl','3d','globe','fintech','dark'], poster:'radial-gradient(38% 55% at 78% 62%,#123064,#06102a 60%,#03060f 75%)' },
+  { slug:'prism-glass', name:'Prism Glass', tags:['webgl','3d','raymarch','glass','light'], poster:'radial-gradient(28% 40% at 72% 50%,#fff,#d9d4ff 40%,transparent 60%),radial-gradient(30% 40% at 40% 25%,#ffc4b0,transparent),#f2f1f8' },
 ];
