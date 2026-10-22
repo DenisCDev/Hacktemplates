@@ -11,7 +11,7 @@
     document.body.prepend(canvas);
   }
   const gl = canvas.getContext('webgl', { antialias:false, alpha:false });
-  if (!gl) { canvas.style.background = 'linear-gradient(180deg,#e9b8a0,#f7c99a 40%,#ffd9a8 42%,#2b4363 44%,#0c1d33)'; return; }
+  if (!gl) { canvas.style.background = 'linear-gradient(180deg,#e9b8a0,#f7c99a 55%,#ffd9a8 58%,#2b4363 60%,#0c1d33)'; return; }
 
   const vert = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
   const frag = `
@@ -91,7 +91,7 @@ void main(){
   T=1.+t*.8;
   vec2 uv=(gl_FragCoord.xy-.5*r)/r.y;
   SUN=normalize(vec3(.32+(m.x-.5)*.2,.045,-1.));
-  float yaw=(m.x-.5)*.25, pitch=-.05+(m.y-.5)*.08;
+  float yaw=(m.x-.5)*.25, pitch=.085+(m.y-.5)*.06;
   vec3 ori=vec3(0.,3.4,-t*4.);   // sail forward (camera looks down -z)
   vec3 dir=normalize(vec3(uv,-2.));
   dir.z+=length(uv)*.14;
