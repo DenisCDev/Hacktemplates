@@ -61,4 +61,5 @@ window.TEMPLATES = [
   { slug:'fold', name:'Fold', tags:['webgl','gradient','light','agency','design'], poster:'radial-gradient(30% 22% at 42% 40%,#ff6a3a,transparent),radial-gradient(22% 18% at 22% 18%,#7a3cff,transparent),#fff' },
   { slug:'signal', name:'Signal', tags:['webgl','glitch','ai','dark','code'], poster:'radial-gradient(26% 40% at 66% 48%,#5a5d70,#1a1b24 50%,#000 72%)' },
   { slug:'savanna', name:'Savanna', tags:['image','depth','travel','booking','illustration'], poster:'url(templates/savanna/scene.jpg) center/cover' },
+  { slug:'sentinel', name:'Sentinel', tags:['image','depth','gaming','cinematic','launch'], poster:'url(templates/sentinel/scene.jpg) center/cover' },
 ];
