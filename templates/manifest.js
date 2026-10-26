@@ -57,4 +57,5 @@ window.TEMPLATES = [
   { slug:'seascape', name:'Seascape', tags:['webgl','3d','raymarch','ocean','light'], poster:'radial-gradient(5% 8% at 86% 57%,#fff,#ffe2b0 40%,transparent 70%),linear-gradient(180deg,#c9a7b3,#f7c99a 60%,#ffd9a8 64%,#2b4363 66%,#0c1d33)' },
   { slug:'cloudline', name:'Cloudline', tags:['webgl','3d','raymarch','clouds','light'], poster:'linear-gradient(180deg,#b9a5c0,#f3c9b8 38%,#fbe3d6 41%,#e9d6d6 60%,#c9b2bd)' },
   { slug:'currents', name:'Currents', tags:['webgl','3d','raymarch','music','dark'], poster:'radial-gradient(14% 22% at 62% 45%,#e6e6ee,#6b6680 50%,transparent 60%),repeating-linear-gradient(118deg,#140a24 0 5px,#9b7fd0 5px 10px)' },
+  { slug:'furnace', name:'Furnace', tags:['webgl','fire','glass','wellness','dark'], poster:'linear-gradient(90deg,#000 8%,#ff6a10 24%,#ffe0a8 32%,#ff6a10 40%,#2a0400 58%,#000)' },
 ];

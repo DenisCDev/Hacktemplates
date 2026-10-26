@@ -93,7 +93,7 @@ python -m http.server 5173
 
 ### Batch 3 — full-motion heroes (each built to its own effect)
 - [x] Currents — chrome sphere in op-art streamlines (real potential flow, ray-traced reflections; after Robert Beatty's cover for Tame Impala)
-- [ ] Furnace — molten fluted bars (orange light through reeded glass)
+- [x] Furnace — molten fluted bars (orange light through reeded glass)
 - [ ] Starmind — hand in a beam of dust (poster by Dogan Ural)
 - [ ] Signal — glitch-glyph portrait (style ref: "One Flair Design", watermarked AI image, so the effect is rebuilt, not the image)
 - [ ] Savanna — acacia sunset illustration
