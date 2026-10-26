@@ -135,7 +135,7 @@ void main(){
       if (!visible) return;
       mx += (tx - mx) * .05; my += (ty - my) * .05;
       gl.uniform2f(ur, canvas.width, canvas.height);
-      gl.uniform1f(ut, still ? 0 : (now - t0) / 1000 + (canvas.seek || 0)); // canvas.seek = seconds, handy for tuning
+      gl.uniform1f(ut, canvas.time != null ? canvas.time : still ? 0 : (now - t0) / 1000 + (canvas.seek || 0)); // canvas.seek = seconds, handy for tuning
       gl.uniform2f(um, mx, my);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };

@@ -119,7 +119,7 @@ void main(){
     if (!visible) return;
     mx += (tx - mx) * .04; my += (ty - my) * .04;
     gl.uniform2f(ur, canvas.width, canvas.height);
-    gl.uniform1f(ut, still ? 20 : (now - t0) / 1000);
+    gl.uniform1f(ut, canvas.time != null ? canvas.time : still ? 20 : (now - t0) / 1000);
     gl.uniform2f(um, mx, my);
     if (uo) gl.uniform2f(uo, focus[0], focus[1]);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
