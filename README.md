@@ -95,7 +95,7 @@ python -m http.server 5173
 - [x] Currents — chrome sphere in op-art streamlines (real potential flow, ray-traced reflections; after Robert Beatty's cover for Tame Impala)
 - [x] Furnace — molten fluted bars (orange light through reeded glass)
 - [ ] Starmind — hand in a beam of dust (poster by Dogan Ural)
-- [ ] Signal — glitch-glyph portrait (style ref: "One Flair Design", watermarked AI image, so the effect is rebuilt, not the image)
+- [x] Signal — glitch-glyph portrait (style ref: "One Flair Design", watermarked AI image, so the effect is rebuilt, not the image)
 - [ ] Savanna — acacia sunset illustration
 - [ ] Sentinel — spartan against the sun, poppy field
 - [x] Fold — orange/violet silk folds on white (from the motion clip)
