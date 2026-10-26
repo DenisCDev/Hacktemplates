@@ -96,6 +96,6 @@ python -m http.server 5173
 - [x] Furnace — molten fluted bars (orange light through reeded glass)
 - [ ] Starmind — hand in a beam of dust (poster by Dogan Ural)
 - [x] Signal — glitch-glyph portrait (style ref: "One Flair Design", watermarked AI image, so the effect is rebuilt, not the image)
-- [ ] Savanna — acacia sunset illustration
+- [x] Savanna — acacia sunset illustration
 - [ ] Sentinel — spartan against the sun, poppy field
 - [x] Fold — orange/violet silk folds on white (from the motion clip)
