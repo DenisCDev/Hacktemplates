@@ -39,8 +39,12 @@
   .meta { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:14px 2px 0; }
   .meta h2 { font-size:15px; font-weight:500; }
   .meta span { font-size:12px; color:var(--muted); }
-  .alt { font-size:12px; color:var(--muted); margin-top:6px; display:flex; gap:14px; }
+  .alt { font-size:12px; color:var(--muted); margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   .alt a:hover { color:var(--fg); }
+  .alt button { font:inherit; font-size:12px; color:var(--fg); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:6px 10px; cursor:pointer; transition:.2s; }
+  .alt button:hover { background:rgba(255,255,255,.12); }
+  .alt button.ok { background:#d9f99d; color:#000; border-color:#d9f99d; }
+  .alt .sp { flex:1; }
   .empty { color:var(--muted); grid-column:1/-1; }
   @media (max-width:480px){ main{ grid-template-columns:1fr; } }
 </style>
@@ -48,7 +52,7 @@
 <body>
 <header>
   <h1>Hero sections, <em>ready to ship.</em></h1>
-  <p>Self-contained, zero-build landing heroes. Shaders, motion, and type. Open one, copy the folder, change the words. Every template also ships its motion background on its own (<code>bg.html</code> + <code>bg.js</code>).</p>
+  <p>Self-contained, zero-build landing heroes. Shaders, motion, and type. Hit <b>Copy hero</b>, paste into an <code>index.html</code>, done — it runs anywhere, no install. Or <b>Copy background</b> for just the motion, two lines.</p>
   <div class="mode" id="mode"><button aria-pressed="true" data-mode="">Full hero</button><button aria-pressed="false" data-mode="bg.html">Background only</button></div>
   <div class="filters" id="filters"></div>
 </header>
@@ -79,39 +83,76 @@
     render();
   });
 
-  function render() {
+  let render = function () {
     const items = list.filter(t => active === 'all' || t.tags.includes(active));
     if (!items.length) { grid.innerHTML = '<p class="empty">Nothing here yet.</p>'; return; }
     grid.innerHTML = items.map(t => `
       <div class="card" data-slug="${t.slug}">
         <a href="templates/${t.slug}/${page}"><div class="frame" style="background:${t.poster}"><span class="num">${String(list.indexOf(t) + 1).padStart(2, '0')}</span></div></a>
         <div class="meta"><h2>${t.name}</h2><span>${t.tags.join(' · ')}</span></div>
-        <div class="alt"><a href="templates/${t.slug}/">Hero ↗</a><a href="templates/${t.slug}/bg.html">Background ↗</a><a href="templates/${t.slug}/bg.js" download>bg.js ↓</a></div>
+        <div class="alt"><button data-copy="hero">Copy hero</button><button data-copy="bg">Copy background</button><span class="sp"></span><a href="templates/${t.slug}/" target="_blank">Open ↗</a></div>
       </div>`).join('');
-  }
+  };
   render();
 
-  // Live preview: mount one iframe on hover/focus. Browsers cap WebGL contexts, so never keep many alive.
-  let live = null;
-  function fit(frame, iframe) { iframe.style.transform = `scale(${frame.clientWidth / 1440})`; }
+  // Live previews: every card on screen plays (browsers cap WebGL contexts, so at most MAX run at once;
+  // off-screen ones are torn down and the poster shows until they scroll back in).
+  const MAX = 6, VW = 1280, VH = 800;
+  const live = new Map();          // card -> iframe
+  const order = [];                // mount order, oldest first
+  const visible = new Set();
+  function fit(frame, iframe) { iframe.style.transform = `scale(${frame.clientWidth / VW})`; }
   function mount(card) {
-    if (live && live.card === card) return;
-    unmount();
+    if (live.has(card)) return;
+    while (live.size >= MAX) {
+      const victim = order.find(c => !visible.has(c)) || order[0];
+      unmountOne(victim);
+    }
     const frame = card.querySelector('.frame');
     const iframe = document.createElement('iframe');
     iframe.src = `templates/${card.dataset.slug}/${page}`;
-    iframe.loading = 'eager';
-    iframe.tabIndex = -1;
-    iframe.onload = () => setTimeout(() => iframe.classList.add('ready'), 250);
-    frame.appendChild(iframe);
-    fit(frame, iframe);
-    live = { card, iframe };
+    iframe.tabIndex = -1; iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.width = VW + 'px'; iframe.style.height = VH + 'px';
+    iframe.onload = () => setTimeout(() => iframe.classList.add('ready'), 300);
+    frame.appendChild(iframe); fit(frame, iframe);
+    live.set(card, iframe); order.push(card);
   }
-  function unmount() { if (live) { live.iframe.remove(); live = null; } }
-  grid.addEventListener('pointerover', e => { const c = e.target.closest('.card'); if (c) mount(c); });
-  grid.addEventListener('focusin', e => { const c = e.target.closest('.card'); if (c) mount(c); });
-  grid.addEventListener('pointerleave', unmount);
-  addEventListener('resize', () => live && fit(live.card.querySelector('.frame'), live.iframe));
+  function unmountOne(card) {
+    const f = live.get(card); if (f) f.remove();
+    live.delete(card); const i = order.indexOf(card); if (i >= 0) order.splice(i, 1);
+  }
+  function unmount() { [...live.keys()].forEach(unmountOne); visible.clear(); }
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { visible.add(e.target); mount(e.target); }
+    else { visible.delete(e.target); unmountOne(e.target); }
+  }), { threshold: .35 });
+  const observe = () => { io.disconnect(); grid.querySelectorAll('.card').forEach(c => io.observe(c)); };
+  const _render = render; render = () => { unmount(); _render(); observe(); };
+  observe();
+  grid.addEventListener('pointerover', e => { const c = e.target.closest('.card'); if (c) { visible.add(c); mount(c); } });
+  addEventListener('resize', () => live.forEach((f, c) => fit(c.querySelector('.frame'), f)));
+
+  // Copy: one paste-and-go file. Assets load from the hosted copy, so nothing else is needed.
+  const HOST = location.hostname.endsWith('vercel.app') ? location.origin : 'https://dvklab.vercel.app';
+  grid.addEventListener('click', async e => {
+    const b = e.target.closest('button[data-copy]'); if (!b) return;
+    const slug = b.closest('.card').dataset.slug, src = `${HOST}/templates/${slug}/bg.js`;
+    let text;
+    if (b.dataset.copy === 'hero') {
+      text = await (await fetch(`templates/${slug}/index.html`)).text();
+      text = text.replace('<script src="bg.js"><\/script>', `<script src="${src}"><\/script>`);
+    } else {
+      text = `<!-- motion background: put content inside the section -->
+<section style="position:relative;min-height:100vh;isolation:isolate">
+  <canvas data-bg style="position:absolute;inset:0;width:100%;height:100%;z-index:-1"></canvas>
+</section>
+<script src="${src}"><\/script>
+`;
+    }
+    await navigator.clipboard.writeText(text);
+    const was = b.textContent; b.textContent = 'Copied ✓'; b.classList.add('ok');
+    setTimeout(() => { b.textContent = was; b.classList.remove('ok'); }, 1400);
+  });
 </script>
 </body>
 </html>
