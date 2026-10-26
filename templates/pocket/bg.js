@@ -17,6 +17,7 @@
   canvas.style.background = `url(${base}scene.jpg) ${focus[0] * 100}% ${100 - focus[1] * 100}% / cover no-repeat`;
   const gl = canvas.getContext('webgl2', { antialias:false, alpha:false });
   if (!gl) return;
+  addEventListener('pagehide', () => { const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); });   /* free the GPU context when the page/iframe goes away */
 
   const vert = `#version 300 es
 in vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }`;
@@ -146,6 +147,7 @@ void main(){
   const ur = U('r'), ut = U('t'), um = U('m'), uo = U('o'), uia = U('ia');
   gl.uniform1i(U('img'), 0); gl.uniform1i(U('maps'), 1); gl.uniform1i(U('sky'), 2);
 
+  const PV = /[?&]preview/.test(location.search);   // gallery thumbnails load light images
   const aniso = gl.getExtension('EXT_texture_filter_anisotropic');   // keeps warped/displaced texture sharp
   const load = (src, unit) => new Promise(res => {
     if (!src) return res(null);
@@ -169,7 +171,7 @@ void main(){
   });
 
   const SCALE = 1.0; // render at full device resolution (× devicePixelRatio, capped at 2)
-  const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE; canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
+  const resize = () => { const d = Math.min(devicePixelRatio || 1, 2) * SCALE * (/[?&]preview/.test(location.search) ? .4 : 1); /* ?preview = light thumbnail render */ canvas.width = canvas.clientWidth * d; canvas.height = canvas.clientHeight * d; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
   let mx = .5, my = .5, tx = mx, ty = my, visible = true;
@@ -177,7 +179,7 @@ void main(){
   new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(canvas);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  Promise.all([load('scene.jpg', 0), load('maps.png', 1), load(null, 2)]).then(([im]) => {
+  Promise.all([load(PV ? 'scene_s.jpg' : 'scene.jpg', 0), load('maps.png', 1), load(null, 2)]).then(([im]) => {
     if (!im) return;
     gl.uniform1f(uia, im.width / im.height);
     gl.uniform2f(uo, focus[0], focus[1]);

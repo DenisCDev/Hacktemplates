@@ -100,7 +100,7 @@
 
   // Live previews: every card on screen plays (browsers cap WebGL contexts, so at most MAX run at once;
   // off-screen ones are torn down and the poster shows until they scroll back in).
-  const MAX = 6, VW = 1280, VH = 800;
+  const MAX = 10, VW = 1280, VH = 800;
   const live = new Map();          // card -> iframe
   const order = [];                // mount order, oldest first
   const visible = new Set();
@@ -113,7 +113,7 @@
     }
     const frame = card.querySelector('.frame');
     const iframe = document.createElement('iframe');
-    iframe.src = `templates/${card.dataset.slug}/${page}`;
+    iframe.src = `templates/${card.dataset.slug}/${page}?preview`;
     iframe.tabIndex = -1; iframe.setAttribute('aria-hidden', 'true');
     iframe.style.width = VW + 'px'; iframe.style.height = VH + 'px';
     iframe.onload = () => setTimeout(() => iframe.classList.add('ready'), 300);
@@ -128,7 +128,7 @@
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { visible.add(e.target); mount(e.target); }
     else { visible.delete(e.target); unmountOne(e.target); }
-  }), { threshold: .35 });
+  }), { threshold: 0, rootMargin: '200px 0px' });
   const observe = () => { io.disconnect(); grid.querySelectorAll('.card').forEach(c => io.observe(c)); };
   const _render = render; render = () => { unmount(); _render(); observe(); };
   observe();

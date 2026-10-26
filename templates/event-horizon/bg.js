@@ -12,6 +12,7 @@
   }
   const gl = canvas.getContext('webgl', { antialias:false, alpha:false });
   if (!gl) { canvas.style.background = 'radial-gradient(7% 11% at 72% 50%,#000 60%,#ffb36b 75%,transparent),radial-gradient(28% 6% at 72% 50%,#ff8a3d,transparent),#000'; return; }
+  addEventListener('pagehide', () => { const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); });   /* free the GPU context when the page/iframe goes away */
 
   const vert = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
   const frag = `
@@ -109,7 +110,7 @@ void main(){
   const focus = (canvas.dataset.focus || '.5,.5').split(',').map(Number); // optional: <canvas data-bg data-focus="x,y">
 
   const SCALE = 0.6; // render scale vs CSS pixels — lower = faster, softer
-  const resize = () => { canvas.width = canvas.clientWidth * SCALE; canvas.height = canvas.clientHeight * SCALE; gl.viewport(0, 0, canvas.width, canvas.height); };
+  const resize = () => { const P = /[?&]preview/.test(location.search) ? .5 : 1; canvas.width = canvas.clientWidth * SCALE * P; canvas.height = canvas.clientHeight * SCALE * P; gl.viewport(0, 0, canvas.width, canvas.height); };
   new ResizeObserver(resize).observe(canvas); resize();
 
   let mx = .5, my = .5, tx = mx, ty = my, visible = true;
