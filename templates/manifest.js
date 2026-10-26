@@ -58,4 +58,5 @@ window.TEMPLATES = [
   { slug:'cloudline', name:'Cloudline', tags:['webgl','3d','raymarch','clouds','light'], poster:'linear-gradient(180deg,#b9a5c0,#f3c9b8 38%,#fbe3d6 41%,#e9d6d6 60%,#c9b2bd)' },
   { slug:'currents', name:'Currents', tags:['webgl','3d','raymarch','music','dark'], poster:'radial-gradient(14% 22% at 62% 45%,#e6e6ee,#6b6680 50%,transparent 60%),repeating-linear-gradient(118deg,#140a24 0 5px,#9b7fd0 5px 10px)' },
   { slug:'furnace', name:'Furnace', tags:['webgl','fire','glass','wellness','dark'], poster:'linear-gradient(90deg,#000 8%,#ff6a10 24%,#ffe0a8 32%,#ff6a10 40%,#2a0400 58%,#000)' },
+  { slug:'fold', name:'Fold', tags:['webgl','gradient','light','agency','design'], poster:'radial-gradient(30% 22% at 42% 40%,#ff6a3a,transparent),radial-gradient(22% 18% at 22% 18%,#7a3cff,transparent),#fff' },
 ];
