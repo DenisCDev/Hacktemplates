@@ -56,4 +56,5 @@ window.TEMPLATES = [
   { slug:'event-horizon', name:'Event Horizon', tags:['webgl','3d','raymarch','space','dark'], poster:'radial-gradient(6% 10% at 66% 50%,#000 70%,#fff3e0 78%,#ffb36b 84%,transparent 92%),radial-gradient(34% 5% at 60% 52%,#ffd9b0,#c8621f 50%,transparent),#05030a' },
   { slug:'seascape', name:'Seascape', tags:['webgl','3d','raymarch','ocean','light'], poster:'radial-gradient(5% 8% at 86% 57%,#fff,#ffe2b0 40%,transparent 70%),linear-gradient(180deg,#c9a7b3,#f7c99a 60%,#ffd9a8 64%,#2b4363 66%,#0c1d33)' },
   { slug:'cloudline', name:'Cloudline', tags:['webgl','3d','raymarch','clouds','light'], poster:'linear-gradient(180deg,#b9a5c0,#f3c9b8 38%,#fbe3d6 41%,#e9d6d6 60%,#c9b2bd)' },
+  { slug:'currents', name:'Currents', tags:['webgl','3d','raymarch','music','dark'], poster:'radial-gradient(14% 22% at 62% 45%,#e6e6ee,#6b6680 50%,transparent 60%),repeating-linear-gradient(118deg,#140a24 0 5px,#9b7fd0 5px 10px)' },
 ];

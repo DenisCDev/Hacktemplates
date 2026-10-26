@@ -90,3 +90,12 @@ python -m http.server 5173
 - [x] Sunset Ridge — orange sun behind dark peaks (D22)
 - [x] Aurora — northern lights over a mirror lake (D23)
 - [x] Stipple — dithered neon hills (D24)
+
+### Batch 3 — full-motion heroes (each built to its own effect)
+- [x] Currents — chrome sphere in op-art streamlines (real potential flow, ray-traced reflections; after Robert Beatty's cover for Tame Impala)
+- [ ] Furnace — molten fluted bars (orange light through reeded glass)
+- [ ] Starmind — hand in a beam of dust (poster by Dogan Ural)
+- [ ] Signal — glitch-glyph portrait (style ref: "One Flair Design", watermarked AI image, so the effect is rebuilt, not the image)
+- [ ] Savanna — acacia sunset illustration
+- [ ] Sentinel — spartan against the sun, poppy field
+- [ ] Fold — orange/violet silk folds on white (from the motion clip)
