@@ -109,6 +109,10 @@ Handy options, all optional:
 
 Works in current Chrome, Edge, Firefox and Safari (WebGL2 for most templates).
 
+## License
+
+The code (HTML, CSS, JS, GLSL) is [MIT](LICENSE): use it in anything, commercial included. The MIT license covers the code only; the reference artwork in image templates isn't ours to license (see below).
+
 ## Credits
 
 - Fonts from Google Fonts. The ASCII glyph atlas uses JetBrains Mono (SIL Open Font License).
