@@ -63,4 +63,5 @@ window.TEMPLATES = [
   { slug:'savanna', name:'Savanna', tags:['image','depth','travel','booking','illustration'], poster:'url(templates/savanna/scene.jpg) center/cover' },
   { slug:'sentinel', name:'Sentinel', tags:['image','depth','gaming','cinematic','launch'], poster:'url(templates/sentinel/scene.jpg) center/cover' },
   { slug:'starmind', name:'Starmind', tags:['image','space','dark','research','particles'], poster:'url(templates/starmind/scene.jpg) 70% 25%/cover,#000' },
+  { slug:'relic', name:'Relic', tags:['webgl','engraving','dark','tattoo','scroll'], poster:'radial-gradient(22% 34% at 64% 50%,#d8d3c8,#3a3936 45%,#000 70%)' },
 ];
