@@ -45,6 +45,13 @@
   .ch h2 .ch-l { display:inline-block; will-change:transform; }
   .ch p.s { margin-top:24px; font-size:16px; line-height:1.65; color:var(--muted); max-width:380px; }
   .hero h2 { font-size:clamp(70px,15vw,260px); letter-spacing:-.05em; font-style:italic; }
+  .ch.low { justify-content:flex-end; padding-bottom:12vh; }
+  .ch.low h2 { text-shadow:0 10px 60px rgba(0,0,0,.6); }
+  /* the ossuary wall is bright red: that room's type turns to ink */
+  .ch.top { justify-content:flex-start; padding-top:15vh; }
+  .ch h2.one { font-size:clamp(46px,6.4vw,112px); }
+  .ch.top p.s { margin-top:12px; }
+  .ch.ink { color:#1c0303; } .ch.ink .eyebrow, .ch.ink p.s { color:rgba(28,3,3,.72); } .ch.ink h2 em { color:#4a0606; }
   .ctas { margin-top:34px; display:flex; gap:12px; pointer-events:auto; }
   .btn { padding:16px 28px; border-radius:999px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; transition:background .4s var(--ease), color .4s var(--ease); display:inline-block; }
   .btn.p { background:var(--ink); color:#1a0202; } .btn.p:hover { background:var(--red); color:var(--ink); }
@@ -82,7 +89,7 @@
 <div class="meter"><span id="mi">01 / 05</span><i><b id="mb"></b></i></div>
 <div class="hint" id="hint">Scroll to descend<i></i></div>
 
-<section class="ch hero center" data-room="0">
+<section class="ch hero center low" data-room="0">
   <p class="eyebrow"><span>A record in five rooms · out 13.03</span></p>
   <h2><span class="ln">Vermilion</span></h2>
   <p class="s" style="margin-left:auto;margin-right:auto">Twelve songs written in the dark and mixed in red. Walk through it before you hear it.</p>
@@ -97,12 +104,12 @@
   <h2><span class="ln">Every door</span><span class="ln">opens <em>to red.</em></span></h2>
   <p class="s">Recorded in one long corridor of a cathedral that was never finished. You can hear the stone.</p>
 </section>
-<section class="ch right" data-room="3">
+<section class="ch ink top right" data-room="3">
   <p class="eyebrow"><span>Room IV — The Ossuary</span></p>
-  <h2><span class="ln">What we</span><span class="ln"><em>keep.</em></span></h2>
-  <p class="s">Everything left over, stacked and lit from one side. The quietest songs on the record.</p>
+  <h2 class="one"><span class="ln">What we <em>keep.</em></span></h2>
+  <p class="s">The quietest songs on the record.</p>
 </section>
-<section class="ch center" data-room="4">
+<section class="ch center low" data-room="4">
   <p class="eyebrow"><span>Room V — The Court</span></p>
   <h2><span class="ln">Take your</span><span class="ln"><em>seat.</em></span></h2>
   <p class="s" style="margin-left:auto;margin-right:auto">Vermilion is out 13 March on vinyl and everywhere else. The tour opens in the same room.</p>

@@ -86,11 +86,11 @@ vec3 vortex(vec2 uv,float f){
 vec3 hall(vec2 uv,float f){
   // walking down the colonnade: near pillars slide past faster than far ones (depth), the doorway glows
   vec2 VP=vec2(.53,.505);
-  float F=f*.55+.03*sin(t*.3);
+  float F=f*.4+.02*sin(t*.3);
   vec2 iu=cover(uv,1.03,vec2(.5,.5));
   iu+=CAM*.4;
   vec2 q=iu;
-  for(int k=0;k<4;k++){ float d=dp(2,q); q=VP+(iu-VP)/(1.+F*(.35+1.6*d*d)); }
+  for(int k=0;k<4;k++){ float d=dp(2,q); q=VP+(iu-VP)/(1.+F*(.45+.9*d*d)); }
   vec3 c=tx(2,clamp(q,.001,.999));
   float door=exp(-pow(length((q-VP)*vec2(IA,1.))/.035,2.));
   c+=vec3(1.,.15,.08)*door*.5*(.75+.25*sin(t*3.)*sin(t*1.7));
@@ -99,7 +99,7 @@ vec3 hall(vec2 uv,float f){
   return c;
 }
 vec3 ossuary(vec2 uv,float f){
-  vec2 iu=cover(uv,1.12,vec2(.5,.3+.35*f));
+  vec2 iu=cover(uv,1.12,vec2(.5,.66-.3*f));
   iu=par(3,iu,CAM*1.3+vec2(0.,.01*sin(t*.4)),.5);
   // the crosses sway a hair, pivoting at their base
   float top=smoothstep(.55,.75,iu.y)*smoothstep(.2,.05,lum(txl(3,iu,2.)));
@@ -195,6 +195,7 @@ void main(){
     const im = new Image(); im.crossOrigin = 'anonymous';
     im.onload = () => {
       gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);   // image rows top-down → uv y-up
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im); gl.generateMipmap(gl.TEXTURE_2D);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);

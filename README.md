@@ -101,5 +101,5 @@ python -m http.server 5173
 - [x] Fold — orange/violet silk folds on white (from the motion clip)
 
 ### Batch 4 — experiences (scroll-driven, GSAP + Lenis + WebGL)
-- [ ] Vermilion — five red rooms in one scroll: crown, vortex, colonnade, ossuary, court (the red city reference is skipped: PIXELSTALK.NET watermark)
+- [x] Vermilion — five red rooms in one scroll: crown, vortex, colonnade, ossuary, court (the red city reference is skipped: PIXELSTALK.NET watermark)
 - [x] Relic — engraved skull assembling from shards (motion from the skull video, whose frames carry a creator watermark; the skull is cut from the red skulls image)
