@@ -1,6 +1,7 @@
 // Every template registers itself here. The gallery (/index.html) reads this list.
 // poster: CSS background shown before the live preview loads.
 window.TEMPLATES = [
+  { slug:'orbit-ascii', name:'Orbit ASCII', tags:['ascii','3d','devtool','dark','space'], poster:'radial-gradient(22% 34% at 64% 46%,#6a5a46,#141210 50%,#030304 72%)' },
   { slug:'vermilion', name:'Vermilion', tags:['webgl','scroll','gsap','experience','dark'], poster:'url(templates/vermilion/c1_s.jpg) center/cover' },
   { slug:'relic', name:'Relic', tags:['webgl','engraving','dark','tattoo','scroll'], poster:'radial-gradient(22% 34% at 64% 50%,#d8d3c8,#3a3936 45%,#000 70%)' },
   { slug:'starmind', name:'Starmind', tags:['image','space','dark','research','particles'], poster:'url(templates/starmind/scene.jpg) 70% 25%/cover,#000' },
