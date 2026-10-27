@@ -20,6 +20,15 @@
   header p code { font-size:.9em; color:var(--fg); }
   header p { margin-top:18px; color:var(--muted); max-width:560px; line-height:1.6; }
 
+
+  .star { position:fixed; top:20px; right:24px; z-index:50; display:inline-flex; align-items:center; gap:10px; padding:9px 10px 9px 14px; border-radius:999px; background:rgba(9,9,11,.72); border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); font-size:13px; font-weight:500; color:var(--fg); transition:border-color .2s, transform .2s; }
+  .star:hover { border-color:rgba(255,255,255,.4); transform:translateY(-1px); }
+  .star svg { width:17px; height:17px; fill:currentColor; }
+  .star .cnt { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; background:rgba(255,255,255,.08); color:var(--muted); font-variant-numeric:tabular-nums; }
+  .star .cnt i { font-style:normal; color:#facc15; }
+  .star .cnt:empty { display:none; }
+  @media (max-width:560px){ .star { top:12px; right:12px; } .star .lbl { display:none; } }
+
   .mode { display:inline-flex; margin-top:28px; padding:4px; border:1px solid var(--line); border-radius:999px; }
   .mode button { font:inherit; font-size:13px; color:var(--muted); background:none; border:0; border-radius:999px; padding:8px 16px; cursor:pointer; transition:.2s; }
   .mode button[aria-pressed="true"] { background:var(--fg); color:#000; }
@@ -53,6 +62,10 @@
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
+<a class="star" href="https://github.com/diiviikk5/Hacktemplates" target="_blank" rel="noopener" aria-label="Star dvklab on GitHub">
+  <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+  <span class="lbl">Star on GitHub</span><span class="cnt" id="stars"></span>
+</a>
 <header>
   <h1>Hero sections, <em>ready to ship.</em></h1>
   <p>Self-contained, zero-build landing heroes. Shaders, motion, and type. Hit <b>Copy hero</b>, paste into an <code>index.html</code>, done — it runs anywhere, no install. Or <b>Copy background</b> for just the motion, two lines.</p>
@@ -150,6 +163,12 @@
     const was = b.textContent; b.textContent = 'Copied ✓'; b.classList.add('ok');
     setTimeout(() => { b.textContent = was; b.classList.remove('ok'); }, 1400);
   });
+</script>
+<script>
+  // live star count (public GitHub API, no auth); the button works without it
+  fetch('https://api.github.com/repos/diiviikk5/Hacktemplates').then(r => r.ok ? r.json() : null).then(j => {
+    if (j && typeof j.stargazers_count === 'number') document.getElementById('stars').innerHTML = '<i>★</i>' + j.stargazers_count.toLocaleString();
+  }).catch(() => {});
 </script>
 </body>
 </html>
