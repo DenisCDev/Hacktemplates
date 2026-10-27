@@ -107,7 +107,7 @@ python -m http.server 5173
 ### Batch 5 — ASCII family + Ember experience
 - [x] Orbit ASCII — ray-traced ringed planet drawn in glyphs (ASCII engine: scene → cell buffer → JetBrains Mono atlas, OFL)
 - [x] Halftone — colour dot-screen landscapes cutting through palettes (after the halftone mountains video)
-- [ ] Vapor — stir-able ASCII smoke simulation
+- [x] Vapor — stir-able ASCII smoke simulation
 - [ ] Ember — scroll experience: dragon eye (video) → into the pupil → fire walker → burning clouds → the wanderer
 - [ ] Ronin — blue samurai, flames and blade alive
 - [ ] Respite — knight resting under the tree
