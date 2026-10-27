@@ -1,6 +1,7 @@
 // Every template registers itself here. The gallery (/index.html) reads this list.
 // poster: CSS background shown before the live preview loads.
 window.TEMPLATES = [
+  { slug:'ronin', name:'Ronin', tags:['image','illustration','comic','bold','blue'], poster:'linear-gradient(90deg,#003f79 62%,#7a1020 62%,#003f79)' },
   { slug:'respite', name:'Respite', tags:['image','card','light','wellness','illustration'], poster:'linear-gradient(90deg,#e7ebe1 60%,#5d8a4a 60%,#9cc4e6)' },
   { slug:'ashborne', name:'Ashborne', tags:['webgl','scroll','gsap','experience','video'], poster:'url(templates/ashborne/c3_s.jpg) center/cover' },
   { slug:'vapor', name:'Vapor', tags:['ascii','simulation','interactive','dark','wellness'], poster:'radial-gradient(14% 40% at 70% 60%,#4a4038,#07070a 70%)' },
