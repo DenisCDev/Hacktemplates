@@ -110,4 +110,4 @@ python -m http.server 5173
 - [x] Vapor — stir-able ASCII smoke simulation
 - [x] Ashborne — scroll experience: dragon eye (video) → into the pupil → fire walker → burning clouds → the wanderer
 - [ ] Ronin — blue samurai, flames and blade alive
-- [ ] Respite — knight resting under the tree
+- [x] Respite — knight resting under the tree
