@@ -139,37 +139,80 @@ void main(){
   int a=int(min(floor(p),4.)); float f=p-float(a);
   if(a==4) f=0.;
   vec3 c=room(a,uv,f);
-  float k=smoothstep(.72,1.,f);
+  // transitions: the camera dives into a portal in the room (smoke, the vortex's heart, the far door, a skull's eye)
+  // and comes out in the next room. They take the last half of each room's scroll.
+  float k=smoothstep(.5,1.,f);
   if(k>0.&&a<4){
-    vec2 sq=(uv-.5)*vec2(r.x/r.y,1.);
-    if(a==0){           // the crown burns away
-      float n=fbm(uv*vec2(r.x/r.y,1.)*3.+3.)*.85+uv.y*.25;
-      float th=k*1.25-.1;
-      vec3 nx=room(1,uv,0.);
-      float e=smoothstep(.06,0.,abs(n-th));
-      c=mix(c,nx,step(n,th));
-      c+=vec3(1.,.45,.1)*e*1.6;
-    } else if(a==1){    // the vortex's black heart swallows the screen
-      float R=pow(k,2.2)*1.3;
-      float d=length(sq);
-      vec3 nx=room(2,(uv-.5)/(1.+.4*(1.-k))+.5,0.);
-      c=mix(c,nx,smoothstep(R,R-.02,d));
-      c+=vec3(1.,.1,.05)*exp(-abs(d-R)*60.)*.8*(1.-k);
-    } else if(a==2){    // the far doorway grows to fill the frame
-      vec2 dq=(uv-vec2(.53,.505))*vec2(r.x/r.y,1.);
-      float s=pow(k,3.)*1.25+.015;
-      vec2 b=abs(dq)-vec2(s*.62,s);
-      float arch=max(b.x,b.y);
-      vec3 nx=room(3,uv,0.);
-      c=mix(c,nx,smoothstep(.004,-.004,arch));
-      c+=vec3(1.,.2,.1)*exp(-abs(arch)*90.)*.7;
-    } else {            // the ossuary melts down into the court
-      float drip=fbm(vec2(uv.x*14.,1.))*.35+vn(vec2(uv.x*60.,2.))*.08;
-      float edge=1.-k*1.5+drip;
-      vec3 nx=room(4,uv,0.);
-      float msk=smoothstep(edge+.01,edge-.01,1.-uv.y);
-      c=mix(c,nx,msk);
-      c=mix(c,vec3(.35,0.,.02),exp(-abs(1.-uv.y-edge)*70.)*.8);
+    float sa=r.x/r.y;
+    vec2 asp=vec2(sa,1.);
+    if(a==0){
+      // into the smoke: push toward the crown while red smoke rushes past in layers, the vortex forms behind it
+      vec2 T=vec2(.5,.62);
+      float Zd=1.+5.5*k*k;
+      vec3 outc=room(0,T+(uv-T)/Zd,f);
+      vec3 inc=room(1,.5+(uv-.5)/(1.+.6*(1.-k)),0.);
+      float cross_=smoothstep(.45,.72,k);
+      c=mix(outc,inc,cross_);
+      float dens=0.;
+      for(int l=0;l<3;l++){
+        float fl=float(l);
+        float z=fract(k*1.6+fl/3.);                         // each smoke layer rushes toward the camera, then is replaced
+        float sc=mix(4.,.6,z);
+        vec2 sp=(uv-T)*asp*sc+vec2(fl*3.1,t*.05+fl*1.7);
+        float n=fbm(sp+fbm(sp*1.6+t*.08)*1.2);
+        dens+=smoothstep(.32,.7,n)*sin(3.14159*z);
+      }
+      float veil=sin(3.14159*k);
+      vec3 smoke=mix(vec3(.18,.01,.01),vec3(.95,.22,.12),clamp(dens*.6,0.,1.));
+      float hl=smoothstep(.5,1.2,dens);                    // lit billow edges
+      smoke+=vec3(1.,.45,.2)*hl*.25;
+      c=mix(c,smoke,clamp(dens*veil*1.5+pow(veil,3.)*.55,0.,1.));
+    } else if(a==1){
+      // into the vortex: an endless dive into the dark heart; the hall is already visible down the hole
+      float Zd=exp(k*k*3.4);
+      vec3 outc=room(1,.5+(uv-.5)/Zd,f);
+      float d=length((uv-.5)*asp);
+      float R=.07*Zd*k;
+      float e=smoothstep(.15,1.,k);
+      vec3 inc=room(2,.5+(uv-.5)*mix(3.2,1.,e),0.);
+      float msk=smoothstep(R,R*.7,d);
+      c=mix(outc,inc,max(msk,smoothstep(.9,1.,k)));
+      c+=vec3(1.,.12,.05)*exp(-abs(d-R)*45.)*.6*(1.-k)*step(.02,R);
+    } else if(a==2){
+      // through the door: fly down the hall into the glowing doorway; its frame passes the edge of the screen
+      vec2 T=vec2(.53,.505);
+      float Zd=exp(k*k*3.6);
+      vec3 outc=room(2,T+(uv-T)/Zd,f);
+      vec2 dq=(uv-T)*asp;
+      vec2 hs=vec2(.0115,.021)*Zd;
+      vec2 bq=abs(dq)-hs;
+      float door=max(bq.x,bq.y);
+      float e=smoothstep(.1,1.,k);
+      vec2 ctr=mix(T,vec2(.5),e);
+      vec3 inc=room(3,.5+(uv-ctr)*mix(2.6,1.,e),0.);
+      float red=smoothstep(.12,.3,outc.r-max(outc.g,outc.b)*1.4)*smoothstep(.15,.35,outc.r);
+      float near=smoothstep(.003,-.003,max(abs(dq.x)-hs.x*2.2,abs(dq.y)-hs.y*1.6));
+      float msk=red*near*smoothstep(.0,.2,k);
+      c=mix(outc,inc,max(msk,smoothstep(.9,1.,k)));
+      c+=vec3(1.,.25,.12)*near*(1.-red)*0.;
+      c=mix(c,vec3(1.,.35,.2),exp(-abs(door)*20.)*.12*k*(1.-k)*4.);   // warm spill from the door as you pass it
+    } else {
+      // into the eye: dive into the left socket of the centre skull; its darkness swallows the frame, the court rises from it
+      vec2 eye=vec2(.508,.365);
+      vec2 s2=sa>IA?vec2(1.,IA/sa):vec2(sa/IA,1.); s2/=1.12;
+      vec2 fo=vec2(.5,.66-.3*f); vec2 cc=clamp(fo,s2*.5,1.-s2*.5);
+      vec2 T=(eye-cc)/s2+.5;
+      float Zd=exp(k*k*4.6);
+      vec3 outc=room(3,T+(uv-T)/Zd,f);
+      float d=length((uv-T)*asp);
+      float R=.03*Zd;
+      float dark=smoothstep(.16,.05,lum(outc));
+      float msk=dark*smoothstep(R,R*.55,d);
+      msk=max(msk,smoothstep(.8,.97,k));
+      float e=smoothstep(.35,1.,k);
+      vec2 ctr=mix(T,vec2(.5),e);
+      vec3 inc=room(4,.5+(uv-ctr)*mix(2.,1.,e),0.)*smoothstep(.3,.95,k);
+      c=mix(outc,inc,msk);
     }
   }
   // scroll speed pulls a little chroma + streak
