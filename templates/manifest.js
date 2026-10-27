@@ -1,12 +1,6 @@
 // Every template registers itself here. The gallery (/index.html) reads this list.
 // poster: CSS background shown before the live preview loads.
 window.TEMPLATES = [
-  { slug:'ronin', name:'Ronin', tags:['image','illustration','comic','bold','blue'], poster:'linear-gradient(90deg,#003f79 62%,#7a1020 62%,#003f79)' },
-  { slug:'respite', name:'Respite', tags:['image','card','light','wellness','illustration'], poster:'linear-gradient(90deg,#e7ebe1 60%,#5d8a4a 60%,#9cc4e6)' },
-  { slug:'ashborne', name:'Ashborne', tags:['webgl','scroll','gsap','experience','video'], poster:'url(templates/ashborne/c3_s.jpg) center/cover' },
-  { slug:'vapor', name:'Vapor', tags:['ascii','simulation','interactive','dark','wellness'], poster:'radial-gradient(14% 40% at 70% 60%,#4a4038,#07070a 70%)' },
-  { slug:'halftone', name:'Halftone', tags:['ascii','halftone','print','light','editorial'], poster:'radial-gradient(#b0263a 30%,transparent 32%) 0 0/7px 7px,#efeff2' },
-  { slug:'orbit-ascii', name:'Orbit ASCII', tags:['ascii','3d','devtool','dark','space'], poster:'radial-gradient(22% 34% at 64% 46%,#6a5a46,#141210 50%,#030304 72%)' },
   { slug:'vermilion', name:'Vermilion', tags:['webgl','scroll','gsap','experience','dark'], poster:'url(templates/vermilion/c1_s.jpg) center/cover' },
   { slug:'relic', name:'Relic', tags:['webgl','engraving','dark','tattoo','scroll'], poster:'radial-gradient(22% 34% at 64% 50%,#d8d3c8,#3a3936 45%,#000 70%)' },
   { slug:'starmind', name:'Starmind', tags:['image','space','dark','research','particles'], poster:'url(templates/starmind/scene.jpg) 70% 25%/cover,#000' },
@@ -16,6 +10,12 @@ window.TEMPLATES = [
   { slug:'fold', name:'Fold', tags:['webgl','gradient','light','agency','design'], poster:'radial-gradient(30% 22% at 42% 40%,#ff6a3a,transparent),radial-gradient(22% 18% at 22% 18%,#7a3cff,transparent),#fff' },
   { slug:'furnace', name:'Furnace', tags:['webgl','fire','glass','wellness','dark'], poster:'linear-gradient(90deg,#000 8%,#ff6a10 24%,#ffe0a8 32%,#ff6a10 40%,#2a0400 58%,#000)' },
   { slug:'currents', name:'Currents', tags:['webgl','3d','raymarch','music','dark'], poster:'radial-gradient(14% 22% at 62% 45%,#e6e6ee,#6b6680 50%,transparent 60%),repeating-linear-gradient(118deg,#140a24 0 5px,#9b7fd0 5px 10px)' },
+  { slug:'ashborne', name:'Ashborne', tags:['webgl','scroll','gsap','experience','video'], poster:'url(templates/ashborne/c3_s.jpg) center/cover' },
+  { slug:'ronin', name:'Ronin', tags:['image','illustration','comic','bold','blue'], poster:'linear-gradient(90deg,#003f79 62%,#7a1020 62%,#003f79)' },
+  { slug:'respite', name:'Respite', tags:['image','card','light','wellness','illustration'], poster:'linear-gradient(90deg,#e7ebe1 60%,#5d8a4a 60%,#9cc4e6)' },
+  { slug:'vapor', name:'Vapor', tags:['ascii','simulation','interactive','dark','wellness'], poster:'radial-gradient(14% 40% at 70% 60%,#4a4038,#07070a 70%)' },
+  { slug:'orbit-ascii', name:'Orbit ASCII', tags:['ascii','3d','devtool','dark','space'], poster:'radial-gradient(22% 34% at 64% 46%,#6a5a46,#141210 50%,#030304 72%)' },
+  { slug:'halftone', name:'Halftone', tags:['ascii','halftone','print','light','editorial'], poster:'radial-gradient(#b0263a 30%,transparent 32%) 0 0/7px 7px,#efeff2' },
   { slug:'cloudline', name:'Cloudline', tags:['webgl','3d','raymarch','clouds','light'], poster:'linear-gradient(180deg,#b9a5c0,#f3c9b8 38%,#fbe3d6 41%,#e9d6d6 60%,#c9b2bd)' },
   { slug:'seascape', name:'Seascape', tags:['webgl','3d','raymarch','ocean','light'], poster:'radial-gradient(5% 8% at 86% 57%,#fff,#ffe2b0 40%,transparent 70%),linear-gradient(180deg,#c9a7b3,#f7c99a 60%,#ffd9a8 64%,#2b4363 66%,#0c1d33)' },
   { slug:'event-horizon', name:'Event Horizon', tags:['webgl','3d','raymarch','space','dark'], poster:'radial-gradient(6% 10% at 66% 50%,#000 70%,#fff3e0 78%,#ffb36b 84%,transparent 92%),radial-gradient(34% 5% at 60% 52%,#ffd9b0,#c8621f 50%,transparent),#05030a' },
